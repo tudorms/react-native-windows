@@ -52,7 +52,11 @@ struct ReactInstanceSettings {
   std::string BundleRootPath;
   facebook::react::NativeLoggingHook LoggingCallback;
   std::shared_ptr<Mso::React::IRedBoxHandler> RedBoxHandler;
+#if defined (USE_HERMES)
+  JSIEngine jsiEngine{JSIEngine::Hermes};
+#else
   JSIEngine jsiEngine{JSIEngine::Chakra};
+#endif
 };
 
 struct IReactInstance {
