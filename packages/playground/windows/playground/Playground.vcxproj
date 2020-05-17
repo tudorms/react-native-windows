@@ -200,6 +200,10 @@
   <ItemGroup>
     <Font Include="Assets\seguiemj.ttf" />
   </ItemGroup>
+  <Import Project="$(ReactNativeWindowsDir)\PropertySheets\JSEngine.Props" />
+  <ItemGroup Condition="'$(USE_HERMES)'=='true'">
+    <Image Include="$(HERMES_Package)\installed\$(Platform)-windows\bin\hermes.dll" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(ReactNativeWindowsDir)\PropertySheets\Bundle.props" />
   <PropertyGroup>

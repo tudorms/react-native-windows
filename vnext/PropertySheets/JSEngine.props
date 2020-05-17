@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <USE_HERMES Condition="'$(USE_HERMES)' == ''">true</USE_HERMES>
+    <HERMES_Version Condition="'$(HERMES_Version)' == ''">0.40.1</HERMES_Version>
+    <HERMES_Package Condition="'$(HERMES_Package)' == ''">$(SolutionDir)packages\ReactNative.Hermes.Windows.$(HERMES_Version)</HERMES_Package>
+
+    <USE_V8 Condition="('$(USE_V8)' == '') Or ('$(Platform)' == 'ARM' OR '$(Platform)' == 'ARM64')">false</USE_V8>
+    <V8_Version Condition="'$(V8_Version)' == ''">0.2.7</V8_Version>
+    <V8_Package Condition="'$(V8_Package)' == ''">$(SolutionDir)packages\ReactNative.V8Jsi.Windows.$(V8_Version)</V8_Package>
+
+    <!-- Enables React-Native-Windows ETW Provider : React-Native-Windows-Provider  -->
+    <ENABLE_ETW_TRACING Condition="'$(ENABLE_ETW_TRACING)' == ''">true</ENABLE_ETW_TRACING>
+
+    <!-- Enables routing Systrace events from JavaScript code to our ETW provider -->
+    <ENABLE_JS_SYSTRACE_TO_ETW Condition="'$(ENABLE_JS_SYSTRACE_TO_ETW)' == ''">true</ENABLE_JS_SYSTRACE_TO_ETW>
+  </PropertyGroup>
+
+  <!--
+    Tracing definitions may be checked in Facebook headers. Make sure they get
+    defined for anything with the potential to include them.
+  -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(ENABLE_ETW_TRACING)'=='true'">ENABLE_ETW_TRACING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(ENABLE_JS_SYSTRACE_TO_ETW)'=='true'">ENABLE_JS_SYSTRACE_TO_ETW;WITH_FBSYSTRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(USE_HERMES)'=='true'">USE_HERMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(USE_V8)'=='true'">USE_V8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <PropertyGroup>
+    <!-- This prop is used for shared JSI code and headers -->
+    <JSI_Source Condition="'$(JSI_Source)' == ''">$(ReactNativeDir)\ReactCommon\jsi</JSI_Source>
+    <JSI_Source Condition="'$(USE_HERMES)' == 'true'">$(HERMES_Package)\installed\x64-windows\include\jsi_ref</JSI_Source>
+
+    <!-- This prop is used for JSI code that may be overridden in external JSI implementations -->
+    <JSI_SourcePath Condition="'$(JSI_SourcePath)' == ''">$(ReactNativeDir)\ReactCommon\jsi</JSI_SourcePath>
+    <JSI_SourcePath Condition="'$(USE_V8)' == 'true'">$(V8_Package)\build\native\include</JSI_SourcePath>
+
+    <!-- This disables copying the v8 DLL to outputs; it is re-enabled locally in win32 projects -->
+    <V8JSI_NODLLCOPY>true</V8JSI_NODLLCOPY>
+  </PropertyGroup>
+
+</Project>
