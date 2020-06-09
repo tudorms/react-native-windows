@@ -201,7 +201,11 @@ struct ReactOptions {
   bool EnableByteCodeCaching{true};
   bool UseJsi{true};
 #ifndef CORE_ABI
+#if defined(USE_HERMES)
+  react::uwp::JSIEngine JsiEngine{react::uwp::JSIEngine::Hermes};
+#else
   react::uwp::JSIEngine JsiEngine{react::uwp::JSIEngine::Chakra};
+#endif
 #endif
 
   //! Enable function nativePerformanceNow.

@@ -34,31 +34,6 @@ enum class JSIEngine : int32_t {
   V8 = 2, // Use the JSIExecutorFactory with V8
 };
 
-struct ReactInstanceSettings {
-  bool UseWebDebugger{false};
-  bool UseFastRefresh{false};
-  bool UseLiveReload{false};
-  bool DebuggerBreakOnNextLine{false};
-  bool UseDirectDebugger{false};
-  bool UseJsi{true};
-  bool EnableJITCompilation{true};
-  bool EnableByteCodeCaching{false};
-  bool EnableDeveloperMenu{false};
-  uint16_t DebuggerPort{9229};
-
-  std::string ByteCodeFileUri;
-  std::string DebugHost;
-  std::string DebugBundlePath;
-  std::string BundleRootPath;
-  facebook::react::NativeLoggingHook LoggingCallback;
-  std::shared_ptr<Mso::React::IRedBoxHandler> RedBoxHandler;
-#if defined (USE_HERMES)
-  JSIEngine jsiEngine{JSIEngine::Hermes};
-#else
-  JSIEngine jsiEngine{JSIEngine::Chakra};
-#endif
-};
-
 struct IReactInstance {
   virtual ~IReactInstance() = default;
 
