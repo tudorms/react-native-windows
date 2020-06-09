@@ -202,7 +202,8 @@
   </ItemGroup>
   <Import Project="$(ReactNativeWindowsDir)\PropertySheets\JSEngine.Props" />
   <ItemGroup Condition="'$(USE_HERMES)'=='true'">
-    <Image Include="$(HERMES_Package)\installed\$(Platform)-windows\bin\hermes.dll" />
+    <Image Include="$(HERMES_Package)\installed\Windows\$(Platform)\$(Configuration)\bin\hermes.dll" />
+    <Image Include="$(HERMES_Package)\installed\Windows\$(Platform)\$(Configuration)\bin\hermes.pdb" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(ReactNativeWindowsDir)\PropertySheets\Bundle.props" />

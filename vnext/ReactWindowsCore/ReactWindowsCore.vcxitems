@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <!-- TODO: Figure out the right long-term way to integrate the Hermes and V8 dependencies -->
-    <VcpkgTriplet Condition="('$(Platform)'=='Win32' OR '$(Platform)'=='x86')">x86-windows</VcpkgTriplet>
-    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows</VcpkgTriplet>
-    <VcpkgTriplet Condition="'$(Platform)'=='ARM'">arm-windows</VcpkgTriplet>
-    <VcpkgTriplet Condition="'$(Platform)'=='ARM64'">arm64-windows</VcpkgTriplet>
+    <VcpkgTriplet Condition="('$(Platform)'=='Win32' OR '$(Platform)'=='x86')">Win32</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='ARM'">ARM</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='ARM64'">ARM64</VcpkgTriplet>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifest>false</GenerateManifest>
@@ -114,7 +114,7 @@
         $(ReactNativeWindowsDir)\Mso;
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(USE_HERMES)'=='true'">$(HERMES_Package)\installed\$(VcpkgTriplet)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(USE_HERMES)'=='true'">$(HERMES_Package)\installed\Windows\$(Platform)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
@@ -123,7 +123,7 @@
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories Condition="'$(USE_HERMES)'=='true'">$(HERMES_Package)\installed\$(VcpkgTriplet)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(USE_HERMES)'=='true'">$(HERMES_Package)\installed\Windows\$(Platform)\$(Configuration)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(USE_HERMES)'=='true'">hermes.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
