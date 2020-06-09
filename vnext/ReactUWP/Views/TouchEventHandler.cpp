@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #include <pch.h>
@@ -91,7 +91,12 @@ void TouchEventHandler::OnPointerPressed(
     UpdatePointersInViews(instance, args, tag, sourceElement);
 
     size_t pointerIndex = AddReactPointer(args, tag, sourceElement);
-    DispatchTouchEvent(TouchEventType::Start, pointerIndex);
+
+    // For now, when using the mouse we only want to send click events for the left button.
+    // Finger and pen taps will also set isLeftButton.
+    if (m_pointers[pointerIndex].isLeftButton) {
+      DispatchTouchEvent(TouchEventType::Start, pointerIndex);
+    }
   }
 }
 

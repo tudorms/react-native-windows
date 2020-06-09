@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #include "pch.h"
 
 #include <ReactUWP/Modules/NativeUIManager.h>
+#include <ReactUWP/Utils/Helpers.h>
 #include <ReactUWP/Views/XamlFeatures.h>
 #include <Views/ShadowNodeBase.h>
 #include "NativeAnimatedNodeManager.h"
@@ -97,9 +98,25 @@ void PropsAnimatedNode::UpdateView() {
   StartAnimations();
 }
 
+static void EnsureUIElementDirtyForRender(xaml::UIElement uiElement) {
+  auto compositeMode = uiElement.CompositeMode();
+  switch (compositeMode) {
+    case xaml::Media::ElementCompositeMode::SourceOver:
+    case xaml::Media::ElementCompositeMode::MinBlend:
+      uiElement.CompositeMode(xaml::Media::ElementCompositeMode::Inherit);
+      break;
+    default:
+      uiElement.CompositeMode(xaml::Media::ElementCompositeMode::SourceOver);
+      break;
+  }
+  uiElement.CompositeMode(compositeMode);
+}
+
 void PropsAnimatedNode::StartAnimations() {
   if (m_expressionAnimations.size()) {
     if (const auto uiElement = GetUIElement()) {
+      // Work around for https://github.com/microsoft/microsoft-ui-xaml/issues/2511
+      EnsureUIElementDirtyForRender(uiElement);
       uiElement.RotationAxis(m_rotationAxis);
       for (const auto anim : m_expressionAnimations) {
         if (anim.second.Target() == L"Translation.X") {
@@ -142,7 +159,7 @@ void PropsAnimatedNode::StartAnimations() {
 void PropsAnimatedNode::DisposeCompletedAnimation(int64_t valueTag) {
   if (m_expressionAnimations.count(valueTag)) {
     if (const auto target = GetUIElement()) {
-      // We should start and stop the expression animtaions if there are
+      // We should start and stop the expression animations if there are
       // no active animations. Suspending the active expression animations
       // while they are not in use causes subsequent key frame animations
       // which target the providing property set to never fire their completed
@@ -251,9 +268,11 @@ ShadowNodeBase *PropsAnimatedNode::GetShadowNodeBase() {
 }
 
 xaml::UIElement PropsAnimatedNode::GetUIElement() {
-  if (const auto shadowNodeBase = GetShadowNodeBase()) {
-    if (const auto shadowNodeView = shadowNodeBase->GetView()) {
-      return shadowNodeView.as<xaml::UIElement>();
+  if (IsRS5OrHigher()) {
+    if (const auto shadowNodeBase = GetShadowNodeBase()) {
+      if (const auto shadowNodeView = shadowNodeBase->GetView()) {
+        return shadowNodeView.as<xaml::UIElement>();
+      }
     }
   }
   return nullptr;

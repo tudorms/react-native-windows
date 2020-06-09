@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Microsoft Corporation.
  * Licensed under the MIT License.
  * @format
  */
@@ -79,6 +79,8 @@ async function runWindows(config, args, options) {
         options.arch,
         msBuildProps,
         verbose,
+        undefined, // build the default target
+        options.buildLogDirectory,
       );
     } catch (e) {
       newError(
@@ -132,7 +134,7 @@ runWindows({
  *    emulator: Boolean - Deploy to the emulator
  *    device: Boolean - Deploy to a device
  *    target: String - Device GUID to deploy to
- *    proxy: Boolean - Run using remote JS proxy
+ *    remote-debugging: Boolean - Run using remote JS proxy
  *    verbose: Boolean - Enables logging
  *    no-packager: Boolean - Do not launch packager while building
  *    bundle: Boolean - Enable Bundle configuration.
@@ -176,7 +178,7 @@ module.exports = {
       description: 'Deploys the app to the specified GUID for a device.',
     },
     {
-      command: '--proxy',
+      command: '--remote-debugging',
       description: 'Deploys the app in remote debugging mode.',
     },
     {
@@ -218,6 +220,11 @@ module.exports = {
       command: '--msbuildprops [string]',
       description:
         'Comma separated props to pass to msbuild, eg: prop1=value1,prop2=value2',
+    },
+    {
+      command: '--buildLogDirectory [string]',
+      description:
+        'Optional directory where msbuild log files should be stored',
     },
     {
       command: '--info',

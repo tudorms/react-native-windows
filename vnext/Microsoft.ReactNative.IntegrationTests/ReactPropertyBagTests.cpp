@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #include "pch.h"
@@ -54,18 +54,6 @@ TEST_CLASS (ReactPropertyBagTests) {
     TestCheck(ns1);
     TestCheck(ns2);
     TestCheck(ns1 == ns2);
-  }
-
-  TEST_METHOD(WeakGlobalNamespace) {
-    // Property bag keeps a weak reference to the Global namespace.
-    weak_ref<IReactPropertyNamespace> globalWeak;
-    {
-      auto global = ReactPropertyBagHelper::GlobalNamespace();
-      TestCheck(global);
-      globalWeak = global;
-      TestCheck(globalWeak.get());
-    }
-    TestCheck(!globalWeak.get());
   }
 
   TEST_METHOD(StoreName) {
@@ -263,6 +251,21 @@ TEST_CLASS (ReactPropertyBagTests) {
     ReactPropertyNamespace ns1{L""};
     TestCheckEqual(ReactPropertyBagHelper::GlobalNamespace(), ns1.Handle());
     TestCheckEqual(ReactPropertyBagHelper::GlobalNamespace(), ReactPropertyNamespace::Global().Handle());
+  }
+
+  TEST_METHOD(PropertyNamespace_Equality) {
+    ReactPropertyNamespace ns11{L"Foo"};
+    ReactPropertyNamespace ns12{ns11};
+    ReactPropertyNamespace ns2{L"Bar"};
+    ReactPropertyNamespace ns3;
+    TestCheckEqual(ns11, ns12);
+    TestCheckEqual(ns12, ns11);
+    TestCheck(ns11 != ns2);
+    TestCheck(ns2 != ns11);
+    TestCheck(ns2 != nullptr);
+    TestCheck(nullptr != ns2);
+    TestCheck(ns3 == nullptr);
+    TestCheck(nullptr == ns3);
   }
 
   TEST_METHOD(PropertyId_ctor_default) {

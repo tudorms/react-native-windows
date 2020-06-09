@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Microsoft Corporation.
  * Licensed under the MIT License.
  * @format
  */
@@ -24,6 +24,8 @@ async function buildSolution(
   buildArch,
   msBuildProps,
   verbose,
+  target,
+  buildLogDirectory,
 ) {
   const minVersion = new Version(10, 0, 18362, 0);
   const allVersions = MSBuildTools.getAllAvailableUAPVersions();
@@ -40,6 +42,8 @@ async function buildSolution(
     buildArch,
     msBuildProps,
     verbose,
+    target,
+    buildLogDirectory,
   );
 }
 
@@ -118,9 +122,9 @@ async function restoreNuGetPackages(options, slnFile, verbose) {
 
 function getSolutionFile(options) {
   const solutions = glob.sync(path.join(options.root, 'windows/*.sln'));
-  if (solutions.length == 0) {
+  if (solutions.length === 0) {
     return null;
-  } else if (solutions.length == 1) {
+  } else if (solutions.length === 1) {
     return solutions[0];
   } else {
     console.log(chalk.red('More than one solution file found:'));

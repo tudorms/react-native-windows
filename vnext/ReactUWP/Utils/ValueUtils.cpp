@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #include "pch.h"
@@ -199,7 +199,7 @@ REACTWINDOWS_API_(bool) IsValidColorValue(const folly::dynamic &d) {
 
 REACTWINDOWS_API_(winrt::TimeSpan) TimeSpanFromMs(double ms) {
   std::chrono::milliseconds dur((int64_t)ms);
-  return winrt::TimeSpan(dur);
+  return winrt::TimeSpan::duration(dur);
 }
 
 } // namespace uwp

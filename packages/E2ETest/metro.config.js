@@ -6,10 +6,6 @@
  */
 const path = require('path');
 const blacklist = require('metro-config/src/defaults/blacklist');
-const {
-  getModulesRunBeforeMainModule,
-  reactNativePlatformResolver,
-} = require('react-native-windows/metro-react-native-platform');
 
 const rnwPath = path.resolve(__dirname, '../../vnext');
 
@@ -23,28 +19,20 @@ module.exports = {
   ],
 
   resolver: {
-    resolveRequest: reactNativePlatformResolver({
-      windows: 'react-native-windows',
-    }),
     extraNodeModules: {
       // Redirect metro to rnwPath instead of node_modules/react-native-windows, since metro doesn't like symlinks
       'react-native-windows': rnwPath,
     },
     blacklistRE: blacklist([
-      new RegExp('.*E2ETest/msbuild.*'.replace(/[/\\]/g, '\\/')), // Avoid error EBUSY: resource busy or locked, open 'D:\a\1\s\packages\E2ETest\msbuild.ProjectImports.zip' in pipeline
+      // Avoid error EBUSY: resource busy or locked, open 'D:\a\1\s\packages\E2ETest\msbuild.ProjectImports.zip' in pipeline
+      /.*\.ProjectImports\.zip/,
       // This stops "react-native run-windows" from causing the metro server to crash if its already running
       new RegExp(
         `${path.resolve(__dirname, 'windows').replace(/[/\\]/g, '/')}.*`
       ),
     ]),
   },
-  serializer: {
-    getModulesRunBeforeMainModule,
-  },
   transformer: {
-    // The cli defaults this to a full path to react-native, which bypasses the reactNativePlatformResolver above
-    // Hopefully we can fix the default in the future
-    assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,

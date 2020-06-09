@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma once
@@ -205,6 +205,7 @@ struct GetCallbackSignatureImpl<TCallback<void(TArgs...) noexcept>> {
 template <class T>
 struct CallbackCreator;
 
+// Callback signature without noexcept
 template <template <class> class TCallback, class... TArgs>
 struct CallbackCreator<TCallback<void(TArgs...)>> {
   static TCallback<void(TArgs...)> Create(
@@ -217,6 +218,7 @@ struct CallbackCreator<TCallback<void(TArgs...)>> {
   }
 };
 
+// Callback signature with noexcept
 template <template <class> class TCallback, class... TArgs>
 struct CallbackCreator<TCallback<void(TArgs...) noexcept>> {
   static TCallback<void(TArgs...)> Create(
@@ -263,7 +265,7 @@ constexpr size_t GetPromiseCount() noexcept {
 }
 
 template <class TResult>
-constexpr bool IsVoidResult() noexcept {
+constexpr bool IsVoidResultCheck() noexcept {
   return std::is_void_v<TResult> || std::is_same_v<TResult, winrt::fire_and_forget>;
 }
 
@@ -444,7 +446,7 @@ struct ModuleMethodInfoBase;
 
 template <class TResult, class... TArgs>
 struct ModuleMethodInfoBase<TResult(TArgs...) noexcept> {
-  constexpr static bool IsVoidResult = IsVoidResult<TResult>();
+  constexpr static bool IsVoidResult = IsVoidResultCheck<TResult>();
   constexpr static size_t ArgCount = sizeof...(TArgs);
   using ArgTuple = std::tuple<RemoveConstRef<TArgs>...>;
   constexpr static size_t CallbackCount = GetCallbackCount<ArgTuple>();
@@ -807,7 +809,7 @@ struct ReactMemberInfoIterator {
   static auto HasGetReactMemberAttribute(...) -> std::false_type;
 
   // Visit members in groups of 10 to avoid deep recursion.
-  template <int StartIndex, class TVisitor, int... I>
+  template <size_t StartIndex, class TVisitor, size_t... I>
   constexpr void ForEachMember(TVisitor &visitor, std::index_sequence<I...> *) noexcept {
     if constexpr (decltype(HasGetReactMemberAttribute(visitor, ReactAttributeId<StartIndex>{}))::value) {
       (GetMemberInfo<StartIndex + I>(visitor), ...);
@@ -856,7 +858,7 @@ struct ReactModuleBuilder {
   template <int I>
   void RegisterModule(std::wstring_view moduleName, std::wstring_view eventEmitterName, ReactAttributeId<I>) noexcept {
     RegisterModuleName(moduleName, eventEmitterName);
-    ReactMemberInfoIterator<TModule>{}.ForEachMember<I + 1>(*this);
+    ReactMemberInfoIterator<TModule>{}.template ForEachMember<I + 1>(*this);
   }
 
   void RegisterModuleName(std::wstring_view moduleName, std::wstring_view eventEmitterName = L"") noexcept {
@@ -967,7 +969,7 @@ struct ReactModuleVerifier {
 
   template <int I>
   constexpr void RegisterModule(std::wstring_view /*_*/, std::wstring_view /*_*/, ReactAttributeId<I>) noexcept {
-    ReactMemberInfoIterator<TModule>{}.ForEachMember<I + 1>(*this);
+    ReactMemberInfoIterator<TModule>{}.template ForEachMember<I + 1>(*this);
   }
 
   template <class TMember, class TAttribute, int I>
@@ -1106,29 +1108,76 @@ struct TurboModuleSpec {
   }
 };
 
+// The default factory for the TModule.
+// It wraps up the TModule into a ReactNonAbiValue to be passed through the ABI boundary.
+template <class TModule>
+inline std::tuple<IInspectable, TModule *> MakeDefaultReactModuleWrapper() noexcept {
+  ReactNonAbiValue<TModule> moduleWrapper{std::in_place};
+  TModule *module = moduleWrapper.GetPtr();
+  return std::tuple<IInspectable, TModule *>{std::move(moduleWrapper), module};
+}
+
+// The default factory for TModule inherited from enable_shared_from_this<T>.
+// It wraps up the TModule into an  std::shared_ptr before giving it to ReactNonAbiValue.
+template <class TModule>
+inline std::tuple<IInspectable, TModule *> MakeDefaultSharedPtrReactModuleWrapper() noexcept {
+  ReactNonAbiValue<std::shared_ptr<TModule>> moduleWrapper{std::in_place, std::make_shared<TModule>()};
+  TModule *module = moduleWrapper.GetPtr()->get();
+  return std::tuple<IInspectable, TModule *>{std::move(moduleWrapper), module};
+}
+
+namespace Internal {
+// Internal functions to test if type is inherited from std::enable_shared_from_this<T>.
+template <class T>
+std::true_type IsBaseOfTemplateTest(std::enable_shared_from_this<T> *);
+std::false_type IsBaseOfTemplateTest(...);
+} // namespace Internal
+
+// Check if type T is inherited from std::enable_shared_form_this<U>.
+// We support the scenario when the T and U are different types.
+template <class T>
+using IsEnabledSharedFromThisT = decltype(Internal::IsBaseOfTemplateTest((T *)nullptr));
+template <class T>
+inline constexpr bool IsEnabledSharedFromThisV = IsEnabledSharedFromThisT<T>::value;
+
+// Default implementation of factory getter for a TModule type **not** inherited from std::enable_shared_form_this.
+// For the custom implementation define GetReactModuleFactory with the last parameter to be 'int' (not 'int *').
+template <class TModule, std::enable_if_t<!IsEnabledSharedFromThisV<TModule>, int> = 0>
+inline constexpr auto GetReactModuleFactory(TModule * /*moduleNullPtr*/, int * /*useDefault*/) noexcept {
+  return &MakeDefaultReactModuleWrapper<TModule>;
+}
+
+// Default implementation of factory getter for a TModule type inherited from std::enable_shared_form_this.
+// For the custom implementation define GetReactModuleFactory with the last parameter to be 'int' (not 'int *').
+template <class TModule, std::enable_if_t<IsEnabledSharedFromThisV<TModule>, int> = 0>
+inline constexpr auto GetReactModuleFactory(TModule * /*moduleNullPtr*/, int * /*useDefault*/) noexcept {
+  return &MakeDefaultSharedPtrReactModuleWrapper<TModule>;
+}
+
+// Type traits for TModule. It defines a factory to create the module and its ABI-safe wrapper.
+template <class TModule>
+struct ReactModuleTraits {
+  using FactoryType = std::tuple<IInspectable, TModule *>() noexcept;
+  static constexpr FactoryType *Factory = GetReactModuleFactory((TModule *)nullptr, 0);
+};
+
+// Create a module provider for TModule type.
 template <class TModule>
 inline ReactModuleProvider MakeModuleProvider() noexcept {
   return [](IReactModuleBuilder const &moduleBuilder) noexcept {
-    ReactNonAbiValue<TModule> moduleObject{std::in_place};
-    TModule *module = moduleObject.GetPtr();
+    auto [moduleWrapper, module] = ReactModuleTraits<TModule>::Factory();
     ReactModuleBuilder builder{module, moduleBuilder};
     GetReactModuleInfo(module, builder);
     builder.CompleteRegistration();
-    return moduleObject;
+    return moduleWrapper;
   };
 }
 
+// Create a module provider for TModule type that satisfies the TModuleSpec.
 template <class TModule, class TModuleSpec>
 inline ReactModuleProvider MakeTurboModuleProvider() noexcept {
   TModuleSpec::template ValidateModule<TModule>();
-  return [](IReactModuleBuilder const &moduleBuilder) noexcept {
-    ReactNonAbiValue<TModule> moduleObject{std::in_place};
-    TModule *module = moduleObject.GetPtr();
-    ReactModuleBuilder builder{module, moduleBuilder};
-    GetReactModuleInfo(module, builder);
-    builder.CompleteRegistration();
-    return moduleObject;
-  };
+  return MakeModuleProvider<TModule>();
 }
 
 } // namespace winrt::Microsoft::ReactNative

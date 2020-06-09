@@ -1,8 +1,48 @@
 # Change Log - @office-iss/react-native-win32
 
-This log was last generated on Fri, 15 May 2020 00:04:44 GMT and should not be manually modified.
+This log was last generated on Sat, 06 Jun 2020 00:05:20 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.0-master.18
+
+Sat, 06 Jun 2020 00:05:20 GMT
+
+### Changes
+
+- Fix errant baseFile in platform override (ngerlem@microsoft.com)
+
+## 0.0.0-master.17
+
+Wed, 03 Jun 2020 00:05:25 GMT
+
+### Changes
+
+- Deprecate acceptsKeyboardFocus (kaigu@microsoft.com)
+
+## 0.0.0-master.14
+
+Sat, 23 May 2020 00:04:45 GMT
+
+### Changes
+
+- Move several stubs from TS to flow (acoates@microsoft.com)
+
+## 0.0.0-master.13
+
+Wed, 20 May 2020 00:04:49 GMT
+
+### Changes
+
+- Reduce need for custom metro configs (acoates@microsoft.com)
+
+## 0.0.0-master.12
+
+Tue, 19 May 2020 00:05:07 GMT
+
+### Changes
+
+- Adapt ViewWin32, etc to "accessibilityState" (ngerlem@microsoft.com)
 
 ## 0.0.0-master.11
 

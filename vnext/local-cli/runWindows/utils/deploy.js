@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Microsoft Corporation.
  * Licensed under the MIT License.
  * @format
  */
@@ -12,6 +12,8 @@ const http = require('http');
 const path = require('path');
 const glob = require('glob');
 const parse = require('xml-parser');
+const child_process = require('child_process');
+const EOL = require('os').EOL;
 const WinAppDeployTool = require('./winappdeploytool');
 const {
   newInfo,
@@ -22,6 +24,7 @@ const {
   commandWithProgress,
   runPowerShellScriptFunction,
 } = require('./commandWithProgress');
+const build = require('./build');
 
 function pushd(pathArg) {
   const cwd = process.cwd();
@@ -54,14 +57,21 @@ function getAppPackage(options) {
   if (!appPackage && options.release) {
     // in the latest vs, Release is removed
     newWarn(
-      'No package found in *_Release_* folder, remove _Release_ and check again',
+      'No package found in *_Release_* folder, removing the _Release_ prefix and checking again',
     );
 
-    appPackage = glob.sync(
-      `${options.root}/windows/{*/AppPackages,AppPackages/*}/*_${
-        options.arch
-      }_*`,
-    )[0];
+    const rootGlob = `${options.root}/windows/{*/AppPackages,AppPackages/*}`;
+    const newGlob = `${rootGlob}/*_${
+      options.arch === 'x86' ? 'Win32' : options.arch
+    }_${options.release ? '' : 'Debug_'}Test`;
+
+    const result = glob.sync(newGlob);
+    if (result.length > 1) {
+      newWarn(`More than one app package found: ${result}`);
+    } else if (result.length === 1) {
+      // we're good
+    }
+    appPackage = glob.sync(newGlob)[0];
   }
 
   if (!appPackage) {
@@ -167,12 +177,6 @@ async function deployToDevice(options, verbose) {
   }
 }
 
-async function hasDotNetProjects(slnFile) {
-  const contents = (await fs.promises.readFile(slnFile)).toString();
-  let r = /\"([^"]+\.(csproj|vbproj))\"/;
-  return r.test(contents);
-}
-
 async function deployToDesktop(options, verbose, slnFile) {
   const appPackageFolder = getAppPackage(options);
   const windowsStoreAppUtils = getWindowsStoreAppUtils(options);
@@ -186,7 +190,38 @@ async function deployToDesktop(options, verbose, slnFile) {
     path.join(appPackageFolder, 'Add-AppDevPackage.ps1'),
   )[0];
 
-  let args = ['--remote-debugging', options.proxy ? 'true' : 'false'];
+  // This path is maintained and VS has promised to keep it valid.
+  const vsWherePath = path.join(
+    process.env['ProgramFiles(x86)'] || process.env.ProgramFiles,
+    '/Microsoft Visual Studio/Installer/vswhere.exe',
+  );
+
+  const vsVersion = child_process
+    .execSync(
+      `"${vsWherePath}" -version 16 -property catalog_productDisplayVersion`,
+    )
+    .toString()
+    .split(EOL)[0];
+
+  if (vsVersion.startsWith('16.5') || vsVersion.startsWith('16.6')) {
+    // VS 16.5 and 16.6 introduced a regression in packaging where the certificates created in the UI will render the package uninstallable.
+    // This will be fixed in 16.7. In the meantime we need to copy the Add-AppDevPackage that has the fix for this EKU issue:
+    // https://developercommunity.visualstudio.com/content/problem/1012921/uwp-packaging-generates-incompatible-certificate.html
+    if (verbose) {
+      newWarn(
+        'Applying Add-AppDevPackage.ps1 workaround for VS 16.5-16.6 bug - see https://developercommunity.visualstudio.com/content/problem/1012921/uwp-packaging-generates-incompatible-certificate.html',
+      );
+    }
+    fs.copyFileSync(
+      path.join(path.resolve(__dirname), 'Add-AppDevPackage.ps1'),
+      script,
+    );
+  }
+
+  let args = [];
+  if (options.remoteDebugging) {
+    args.push('--remote-debugging');
+  }
 
   if (options.directDebugging) {
     const port = parseInt(options.directDebugging, 10);
@@ -210,12 +245,11 @@ async function deployToDesktop(options, verbose, slnFile) {
   await runPowerShellScriptFunction(
     'Enabling Developer Mode',
     windowsStoreAppUtils,
-    `EnableDevMode "${script}"`,
+    'EnableDevMode',
     verbose,
   );
 
-  // #4749 - need to deploy from appx for .net projects.
-  if (options.release || (await hasDotNetProjects(slnFile))) {
+  if (options.release) {
     await runPowerShellScriptFunction(
       'Installing new version of the app',
       windowsStoreAppUtils,
@@ -223,12 +257,14 @@ async function deployToDesktop(options, verbose, slnFile) {
       verbose,
     );
   } else {
-    const realAppxManifestPath = fs.realpathSync(appxManifestPath);
-    await runPowerShellScriptFunction(
-      'Installing new version of the app from layout',
-      windowsStoreAppUtils,
-      `Install-AppFromDirectory "${realAppxManifestPath}"`,
-      verbose,
+    await build.buildSolution(
+      slnFile,
+      options.release ? 'Release' : 'Debug',
+      options.arch,
+      {DeployLayout: true},
+      options.verbose,
+      'Deploy',
+      options.buildLogDirectory,
     );
   }
 

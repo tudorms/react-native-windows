@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #include "pch.h"
@@ -7,6 +7,9 @@
 #include <UI.Xaml.Media.h>
 #include <Utils/Helpers.h>
 #include <winrt/Windows.Foundation.Metadata.h>
+
+#include <appmodel.h>
+#include <processthreadsapi.h>
 
 namespace winrt {
 using namespace xaml::Controls::Primitives;
@@ -89,6 +92,15 @@ bool IsRS5OrHigher() {
 
 bool Is19H1OrHigher() {
   return IsAPIContractV8Available();
+}
+
+bool IsXamlIsland() {
+  AppPolicyWindowingModel e;
+  if (FAILED(AppPolicyGetWindowingModel(GetCurrentThreadEffectiveToken(), &e)) ||
+      e == AppPolicyWindowingModel_ClassicDesktop) {
+    return true;
+  }
+  return false;
 }
 
 } // namespace uwp
