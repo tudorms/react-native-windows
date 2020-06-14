@@ -1,8 +1,48 @@
 # Change Log - react-native-windows
 
-This log was last generated on Tue, 09 Jun 2020 00:06:03 GMT and should not be manually modified.
+This log was last generated on Sat, 13 Jun 2020 00:09:11 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.0-master.93
+
+Sat, 13 Jun 2020 00:09:11 GMT
+
+### Changes
+
+- Implement logbox (acoates@microsoft.com)
+- Add Microsoft.ReactNative.Cxx to the nugets. (acoates@microsoft.com)
+- Fix file lock issue wiht msbuild /bl flag and the metro bundler (dannyvv@microsoft.com)
+
+## 0.0.0-master.92
+
+Fri, 12 Jun 2020 00:33:44 GMT
+
+### Changes
+
+- Fix support for `--namespace` on react-native-windows init for cpp (dannyvv@microsoft.com)
+
+## 0.0.0-master.91
+
+Thu, 11 Jun 2020 00:05:14 GMT
+
+### Changes
+
+- Add support for redbox's on xamlislands (acoates@microsoft.com)
+- Manually set Lib and Include paths for Hermes (julio.rocha@microsoft.com)
+- More rnw-dependencies improvements (asklar@microsoft.com)
+
+## 0.0.0-master.90
+
+Wed, 10 Jun 2020 00:05:10 GMT
+
+### Changes
+
+- implement --proxy in CLI (igklemen@microsoft.com)
+- Don't crash when using animations in RS3-RS4, just no-op (asklar@microsoft.com)
+- Add support for Alert module with Xaml Islands (acoates@microsoft.com)
+- fix onPress for nested Text (igklemen@microsoft.com)
+- translate PS exception into error code (asklar@microsoft.com)
 
 ## 0.0.0-master.89
 
