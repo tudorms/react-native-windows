@@ -120,6 +120,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ReactNative.Manag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ReactNative.Managed.CodeGen", "Microsoft.ReactNative.Managed.CodeGen\Microsoft.ReactNative.Managed.CodeGen.csproj", "{ADED4FBE-887D-4271-AF24-F0823BCE7961}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuickJSI", "QuickJSI\QuickJSI.vcxproj", "{094DEE73-AE16-4E29-A7A0-90AE52927F13}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		JSI\Shared\JSI.Shared.vcxitems*{0cc28589-39e4-4288-b162-97b959f8b843}*SharedItemsImports = 9
@@ -144,14 +146,14 @@ Global
 		Shared\Shared.vcxitems*{f7d32bd0-2749-483e-9a0d-1635ef7e3136}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Debug|ARM = Debug|ARM
 		Debug|ARM64 = Debug|ARM64
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|ARM = Release|ARM
 		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F7D32BD0-2749-483E-9A0D-1635EF7E3136}.Debug|ARM.ActiveCfg = Debug|ARM
@@ -343,6 +345,18 @@ Global
 		{ADED4FBE-887D-4271-AF24-F0823BCE7961}.Release|x64.Build.0 = Release|x64
 		{ADED4FBE-887D-4271-AF24-F0823BCE7961}.Release|x86.ActiveCfg = Release|x86
 		{ADED4FBE-887D-4271-AF24-F0823BCE7961}.Release|x86.Build.0 = Release|x86
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Debug|ARM.ActiveCfg = Debug|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Debug|x64.ActiveCfg = Debug|x64
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Debug|x64.Build.0 = Debug|x64
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Debug|x86.ActiveCfg = Debug|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Debug|x86.Build.0 = Debug|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Release|ARM.ActiveCfg = Release|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Release|ARM64.ActiveCfg = Release|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Release|x64.ActiveCfg = Release|x64
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Release|x64.Build.0 = Release|x64
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Release|x86.ActiveCfg = Release|Win32
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -369,6 +383,7 @@ Global
 		{14FA0516-E6D7-4E4D-B097-1470198C5072} = {25C4DA8C-A4D2-4D5F-950A-E5371A8AB659}
 		{0F4DBB0D-659A-4330-845F-E77204F90B12} = {25C4DA8C-A4D2-4D5F-950A-E5371A8AB659}
 		{ADED4FBE-887D-4271-AF24-F0823BCE7961} = {CF71BDBF-544C-4EBC-85F6-6911A0E2F5B8}
+		{094DEE73-AE16-4E29-A7A0-90AE52927F13} = {6348365C-E58A-4CB4-96CA-E2A6C1201DD6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {988F03E6-640A-4C7E-8B55-C1291B70669E}

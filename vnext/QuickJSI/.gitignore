@@ -1,0 +1,4 @@
+.vs
+build
+/src/packages/*
+/src/x64/*

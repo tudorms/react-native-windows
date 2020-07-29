@@ -30,7 +30,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup>
-    <IncludePath>$(ReactNativeWindowsDir);$(ReactNativeWindowsDir)Common;$(ReactNativeWindowsDir)stubs;$(FollyDir);$(ReactNativeDir)\ReactCommon;$(JSI_Source);$(ReactNativeWindowsDir)Shared;$(ReactNativeWindowsDir)\Shared\tracing;$(ReactNativeWindowsDir)include\Shared;$(ReactNativeWindowsDir)Desktop;$(ReactNativeWindowsDir)IntegrationTests;$(ReactNativeWindowsDir)JSI\Shared;$(MSBuildProjectDirectory);$(ReactNativeDir)\ReactCommon\callinvoker;$(IncludePath)</IncludePath>
+    <IncludePath>$(ReactNativeWindowsDir);$(ReactNativeWindowsDir)Common;$(ReactNativeWindowsDir)stubs;$(FollyDir);$(ReactNativeDir)\ReactCommon;$(JSI_Source);$(ReactNativeWindowsDir)Shared;$(ReactNativeWindowsDir)\Shared\tracing;$(ReactNativeWindowsDir)include\Shared;$(ReactNativeWindowsDir)Desktop;$(ReactNativeWindowsDir)IntegrationTests;$(ReactNativeWindowsDir)JSI\Shared;$(MSBuildProjectDirectory);$(ReactNativeDir)\ReactCommon\callinvoker;$(ReactNativeWindowsDir)\QuickJSI\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -109,6 +109,9 @@
     </ProjectReference>
     <ProjectReference Include="..\IntegrationTests\React.Windows.IntegrationTests.vcxproj">
       <Project>{700A84FD-F92A-43F1-8D06-B0E0745DF9B5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QuickJSI\QuickJSI.vcxproj">
+      <Project>{094DEE73-AE16-4E29-A7A0-90AE52927F13}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
