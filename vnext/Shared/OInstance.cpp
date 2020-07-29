@@ -51,6 +51,7 @@
 #include "BaseScriptStoreImpl.h"
 #include "V8JSIRuntimeHolder.h"
 #endif
+#include "QuickJSRuntimeHolder.h"
 #include <ReactCommon/CallInvoker.h>
 #include <ReactCommon/TurboModuleBinding.h>
 #include "ChakraRuntimeHolder.h"
@@ -401,6 +402,10 @@ InstanceImpl::InstanceImpl(
           [[fallthrough]];
 #endif
         }
+        case JSIEngineOverride::QuickJS:
+          m_devSettings->jsiRuntimeHolder = std::make_shared<QuickJSRuntimeHolder>();
+          break;
+
         case JSIEngineOverride::Chakra:
         case JSIEngineOverride::ChakraCore:
         default: // TODO: Add other engines once supported
