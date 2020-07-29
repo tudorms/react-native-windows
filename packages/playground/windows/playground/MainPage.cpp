@@ -54,6 +54,7 @@ void MainPage::OnLoadClick(
   host.InstanceSettings().DebuggerBreakOnNextLine(x_BreakOnFirstLineCheckBox().IsChecked().GetBoolean());
   host.InstanceSettings().UseFastRefresh(x_UseFastRefreshCheckBox().IsChecked().GetBoolean());
   host.InstanceSettings().DebuggerPort(static_cast<uint16_t>(std::stoi(std::wstring(x_DebuggerPort().Text()))));
+  host.InstanceSettings().JSIEngineOverride(Microsoft::ReactNative::JSIEngine::QuickJS);
   if (!m_bundlerHostname.empty()) {
     host.InstanceSettings().DebugHost(m_bundlerHostname);
   }
