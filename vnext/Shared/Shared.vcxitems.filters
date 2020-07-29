@@ -106,6 +106,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Executors\WebSocketJSExecutorFactory.cpp">
       <Filter>Source Files\Executors</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)QuickJsRuntimeHolder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -308,7 +309,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)FeatureGate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)QuickJsRuntimeHolder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)etw\build.bat">

@@ -200,9 +200,7 @@ struct ReactOptions {
   std::string ByteCodeFileUri;
   bool EnableByteCodeCaching{true};
   bool UseJsi{true};
-#ifndef CORE_ABI
   react::uwp::JSIEngine JsiEngine{react::uwp::JSIEngine::Chakra};
-#endif
 
   //! Enable function nativePerformanceNow.
   //! Method nativePerformanceNow() returns high resolution time info.
