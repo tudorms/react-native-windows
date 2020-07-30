@@ -389,6 +389,44 @@ private:
         return -1;
     }
 
+    bool _dontExecutePending{false};
+    struct PendingExecutionScope
+    {
+        PendingExecutionScope(QuickJSRuntime& rt)
+            : _rt(rt)
+        {
+            _pushedScope = _rt._dontExecutePending; 
+            _rt._dontExecutePending = true;
+        }
+
+        ~PendingExecutionScope()
+        {
+            _rt._dontExecutePending = _pushedScope;
+            ExecutePendingJobs();
+        }
+
+    private:
+        void ExecutePendingJobs()
+        {
+            if (_rt._dontExecutePending)
+                return;
+
+            JSContext *ctx1{nullptr};
+            int err{1};
+            while (err > 0)
+            {
+                err = JS_ExecutePendingJob(_rt._runtime.rt, &ctx1);
+                if (err < 0) {
+                    // TODO: throw exception details from ctx1
+                    _rt.ThrowJSError();
+                }
+            }
+        }
+
+        bool _pushedScope;
+        QuickJSRuntime &_rt;
+    };
+
 public:
     QuickJSRuntime(QuickJSRuntimeArgs&& args) :
         _runtime(), _context(_runtime)
@@ -402,8 +440,14 @@ public:
 
     virtual jsi::Value evaluateJavaScript(const std::shared_ptr<const jsi::Buffer>& buffer, const std::string& sourceURL) override try
     {
-        auto val = _context.eval(reinterpret_cast<const char*>(buffer->data()), sourceURL.c_str(), JS_EVAL_TYPE_GLOBAL);
-        auto result = createValue(std::move(val));
+        jsi::Value result;
+        {
+            PendingExecutionScope scope(*this);
+
+            auto val = _context.eval(reinterpret_cast<const char *>(buffer->data()), sourceURL.c_str(), JS_EVAL_TYPE_GLOBAL);
+            result = createValue(std::move(val));
+        }
+
         return result;
     }
     catch (qjs::exception&)
@@ -1137,7 +1181,14 @@ public:
         auto funcValConst = AsJSValueConst(func);
         auto thisValConst = AsJSValueConst(jsThis);
 
-        return createValue(JS_Call(_context.ctx, funcValConst, thisValConst, static_cast<int>(count), jsArgsConst.data()));
+        jsi::Value result;
+        {
+            PendingExecutionScope scope(*this);
+
+            result = createValue(JS_Call(_context.ctx, funcValConst, thisValConst, static_cast<int>(count), jsArgsConst.data()));
+        }
+
+        return result;
     }
     catch (qjs::exception&)
     {
@@ -1155,7 +1206,14 @@ public:
 
         auto funcValConst = AsJSValueConst(func);
 
-        return createValue(JS_CallConstructor(_context.ctx, funcValConst, static_cast<int>(count), jsArgsConst.data()));
+        jsi::Value result;
+        {
+            PendingExecutionScope scope(*this);
+
+            result = createValue(JS_CallConstructor(_context.ctx, funcValConst, static_cast<int>(count), jsArgsConst.data()));
+        }
+
+        return result;
     }
     catch (qjs::exception&)
     {
