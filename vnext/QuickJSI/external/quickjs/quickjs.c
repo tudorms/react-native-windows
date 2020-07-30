@@ -1256,8 +1256,7 @@ static void js_trigger_gc(JSRuntime *rt, size_t size)
     }
 }
 
-static size_t js_malloc_usable_size_unknown(const void *ptr)
-{
+static size_t __cdecl js_malloc_usable_size_unknown(const void *ptr) {
     return 0;
 }
 
@@ -1714,7 +1713,7 @@ static const JSMallocFunctions def_malloc_funcs = {
 #if defined(__APPLE__)
     malloc_size,
 #elif defined(_WIN32)
-    (size_t (*)(const void *))_msize,
+    (size_t (__cdecl *)(const void *))_msize,
 #elif defined(EMSCRIPTEN)
     NULL,
 #elif defined(__linux__) || defined(__NX__)
@@ -11686,7 +11685,7 @@ int JS_IsArray(JSContext *ctx, JSValueConst val)
     }
 }
 
-static double js_pow(double a, double b)
+static double __cdecl js_pow(double a, double b)
 {
     if (unlikely(!isfinite(b)) && fabs(a) == 1) {
         /* not compatible with IEEE 754 */
@@ -40468,7 +40467,7 @@ static JSValue js_math_min_max(JSContext *ctx, JSValueConst this_val,
     }
 }
 
-static double js_math_sign(double a)
+static double __cdecl js_math_sign(double a)
 {
     if (isnan(a) || a == 0.0)
         return a;
@@ -40478,8 +40477,7 @@ static double js_math_sign(double a)
         return 1;
 }
 
-static double js_math_round(double a)
-{
+static double __cdecl js_math_round(double a) {
     JSFloat64Union u;
     uint64_t frac_mask, one;
     unsigned int e, s;
@@ -40553,7 +40551,7 @@ static JSValue js_math_hypot(JSContext *ctx, JSValueConst this_val,
     return JS_NewFloat64(ctx, r);
 }
 
-static double js_math_fround(double a)
+static double __cdecl js_math_fround(double a)
 {
     return (float)a;
 }
@@ -40624,8 +40622,10 @@ static JSValue js_math_random(JSContext *ctx, JSValueConst this_val,
 }
 
 #if defined(_MSC_VER)
-static double const_floor(double x) { return floor(x); }
-static double const_ceil(double x) { return ceil(x); }
+static double __cdecl const_floor(double x) {
+  return floor(x);
+}
+static double __cdecl const_ceil(double x) { return ceil(x); }
 #endif
 
 static const JSCFunctionListEntry js_math_funcs[] = {

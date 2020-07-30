@@ -138,9 +138,19 @@ static inline int clz32(unsigned int a)
 static inline int clz64(uint64_t a)
 {
 #if defined(_MSC_VER)
+#if _WIN64
     unsigned long ret = 0;
     _BitScanReverse64(&ret, a);
     return (int)ret;
+#else //TODO: check me
+    uint32_t u32 = (a >> 32);
+    uint32_t result = u32 ? clz32(u32) : 32;
+    if (result == 32) {
+      u32 = a & 0xFFFFFFFFUL;
+      result += (u32 ? clz32(u32) : 32);
+    }
+    return result;
+#endif
 #else
     return __builtin_clzll(a);
 #endif
