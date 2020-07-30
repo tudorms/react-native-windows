@@ -401,9 +401,14 @@ private:
         ~PendingExecutionScope()
         {
             _rt._dontExecutePending = _pushedScope;
+            // Do not run if there is a new exception in the scope
+            if (_uncaughtExceptions == std::uncaught_exceptions())
+            {
+                ExecutePendingJobs();
+            }
         }
 
-        // Run the jobs explicitly to account for code in scope throwing exceptions
+    private:
         void ExecutePendingJobs()
         {
             if (_rt._dontExecutePending)
@@ -421,9 +426,9 @@ private:
             }
         }
 
-    private:
         bool _pushedScope;
         QuickJSRuntime &_rt;
+        int _uncaughtExceptions{std::uncaught_exceptions()};
     };
 
 public:
@@ -445,8 +450,6 @@ public:
 
             auto val = _context.eval(reinterpret_cast<const char *>(buffer->data()), sourceURL.c_str(), JS_EVAL_TYPE_GLOBAL);
             result = createValue(std::move(val));
-
-            scope.ExecutePendingJobs(); // run only if there was no exception before
         }
 
         return result;
@@ -1198,8 +1201,6 @@ public:
             }
 
             result = createValue(std::move(jsResult));
-
-            scope.ExecutePendingJobs(); // run only if there was no exception before
         }
 
         return result;
@@ -1234,8 +1235,6 @@ public:
             }
 
             result = createValue(std::move(jsResult));
-
-            scope.ExecutePendingJobs(); // run only if there was no exception before
         }
 
         return result;
