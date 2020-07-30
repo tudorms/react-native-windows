@@ -52,18 +52,19 @@ private:
 
     class QuickJSPointerValue final : public jsi::Runtime::PointerValue
     {
-        QuickJSPointerValue(qjs::Value&& val) :
-            _val(std::move(val))
+        QuickJSPointerValue(qjs::Value &&val) :
+            _val(std::move(val)), _threadId(std::this_thread::get_id())
         {
         }
 
         QuickJSPointerValue(const qjs::Value& val) :
-            _val(val)
+            _val(val), _threadId(std::this_thread::get_id())
         {
         }
 
         void invalidate() override
         {
+            assert(_threadId == std::this_thread::get_id());
             delete this;
         }
 
@@ -79,6 +80,7 @@ private:
 
     private:
         qjs::Value _val;
+        std::thread::id _threadId;
 
     protected:
         friend class QuickJSRuntime;
@@ -89,13 +91,13 @@ private:
     {
         QuickJSAtomPointerValue(JSContext* context, JSAtom atom)
             : _context { context }
-            , _atom { atom }
+            , _atom { atom }, _threadId(std::this_thread::get_id())
         {
         }
 
         QuickJSAtomPointerValue(const QuickJSAtomPointerValue& other)
             : _context { other._context }
-            , _atom { other._atom }
+            , _atom { other._atom }, _threadId(std::this_thread::get_id())
         {
             if (_context)
             {
@@ -105,6 +107,7 @@ private:
 
         void invalidate() override
         {
+            assert(_threadId == std::this_thread::get_id());
             if (_context)
             {
                 JS_FreeAtom(_context, _atom);
@@ -121,6 +124,7 @@ private:
     private:
         JSContext* _context;
         JSAtom _atom;
+        std::thread::id _threadId;
     };
 
     template <typename T>

@@ -69,3 +69,4 @@ RuntimeFactory getQuickJSRuntime() {
 }
 
 INSTANTIATE_TEST_CASE_P(QuickJSRuntimeTest, JsiRuntimeUnitTests, ::testing::Values(getQuickJSRuntime()));
+INSTANTIATE_TEST_CASE_P(QuickJSRuntimeTest_More, JsiRuntimeUnitTests_Chakra, ::testing::Values(getQuickJSRuntime()));
