@@ -393,19 +393,17 @@ private:
     struct PendingExecutionScope
     {
         PendingExecutionScope(QuickJSRuntime& rt)
-            : _rt(rt)
+            : _pushedScope{std::exchange(rt._dontExecutePending, true)} 
+            , _rt(rt)
         {
-            _pushedScope = _rt._dontExecutePending; 
-            _rt._dontExecutePending = true;
         }
 
         ~PendingExecutionScope()
         {
             _rt._dontExecutePending = _pushedScope;
-            ExecutePendingJobs();
         }
 
-    private:
+        // Run the jobs explicitly to account for code in scope throwing exceptions
         void ExecutePendingJobs()
         {
             if (_rt._dontExecutePending)
@@ -423,6 +421,7 @@ private:
             }
         }
 
+    private:
         bool _pushedScope;
         QuickJSRuntime &_rt;
     };
@@ -446,6 +445,8 @@ public:
 
             auto val = _context.eval(reinterpret_cast<const char *>(buffer->data()), sourceURL.c_str(), JS_EVAL_TYPE_GLOBAL);
             result = createValue(std::move(val));
+
+            scope.ExecutePendingJobs(); // run only if there was no exception before
         }
 
         return result;
@@ -1178,6 +1179,8 @@ public:
         for (size_t i = 0; i < count; ++i)
         {
             jsArgsConst[i] = AsJSValueConst(*(args + i));
+            // Increment the args ref count in case if the call causes the GC run.
+            JS_DupValue(_context.ctx, jsArgsConst[i]);
         }
 
         auto funcValConst = AsJSValueConst(func);
@@ -1187,7 +1190,16 @@ public:
         {
             PendingExecutionScope scope(*this);
 
-            result = createValue(JS_Call(_context.ctx, funcValConst, thisValConst, static_cast<int>(count), jsArgsConst.data()));
+            JSValue jsResult = JS_Call(_context.ctx, funcValConst, thisValConst, static_cast<int>(count), jsArgsConst.data());
+            // Decrement args ref count before the exception check that happens in the qjs::Value.
+            for (size_t i = 0; i < count; ++i)
+            {
+                JS_FreeValue(_context.ctx, jsArgsConst[i]);
+            }
+
+            result = createValue(std::move(jsResult));
+
+            scope.ExecutePendingJobs(); // run only if there was no exception before
         }
 
         return result;
@@ -1204,6 +1216,8 @@ public:
         for (size_t i = 0; i < count; ++i)
         {
             jsArgsConst[i] = AsJSValueConst(*(args + i));
+            // Increment the args ref count in case if the call causes the GC run.
+            JS_DupValue(_context.ctx, jsArgsConst[i]);
         }
 
         auto funcValConst = AsJSValueConst(func);
@@ -1212,7 +1226,16 @@ public:
         {
             PendingExecutionScope scope(*this);
 
-            result = createValue(JS_CallConstructor(_context.ctx, funcValConst, static_cast<int>(count), jsArgsConst.data()));
+            JSValue jsResult = JS_CallConstructor(_context.ctx, funcValConst, static_cast<int>(count), jsArgsConst.data());
+            // Decrement args ref count before the exception check that happens in the qjs::Value.
+            for (size_t i = 0; i < count; ++i)
+            {
+                JS_FreeValue(_context.ctx, jsArgsConst[i]);
+            }
+
+            result = createValue(std::move(jsResult));
+
+            scope.ExecutePendingJobs(); // run only if there was no exception before
         }
 
         return result;
