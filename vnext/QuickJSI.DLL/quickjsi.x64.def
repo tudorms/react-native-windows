@@ -1,0 +1,2 @@
+EXPORTS
+?makeQuickJSRuntime@quickjs@@YA?AV?$unique_ptr@VRuntime@jsi@facebook@@U?$default_delete@VRuntime@jsi@facebook@@@std@@@std@@$$QEAUQuickJSRuntimeArgs@1@@Z
