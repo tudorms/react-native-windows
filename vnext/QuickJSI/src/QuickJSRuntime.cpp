@@ -10,6 +10,12 @@
 
 #include "QuickJSRuntime.h"
 
+#ifdef TRACE_FUNCTION_CALLS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <debugapi.h>
+#endif
+
 using namespace facebook;
 using namespace std::string_literals;
 
@@ -475,6 +481,8 @@ private:
                     _rt.ThrowJSError();
                 }
             }
+
+            // JS_RunGC(_rt._runtime.rt);
         }
 
         bool _pushedScope;
@@ -1230,15 +1238,49 @@ public:
     {
         QJS_VERIFY_ELSE_CRASH_MSG(count <= MaxCallArgCount, "Argument count must not exceed the supported max arg count.");
         std::array<JSValue, MaxCallArgCount> jsArgsConst;
+#ifdef TRACE_FUNCTION_CALLS
+        std::vector<std::string> arguments;
+#endif
         for (size_t i = 0; i < count; ++i)
         {
             jsArgsConst[i] = AsJSValueConst(*(args + i));
             // Increment the args ref count in case if the call causes the GC run.
             JS_DupValue(_context.ctx, jsArgsConst[i]);
+
+#ifdef TRACE_FUNCTION_CALLS
+            size_t plen;
+            const char *argval;
+
+            if (JS_IsObject(jsArgsConst[i])) {
+                auto asjson = JS_JSONStringify(_context.ctx, jsArgsConst[i], JS_UNDEFINED, JS_UNDEFINED);
+                argval = JS_ToCStringLen(_context.ctx, &plen, asjson);
+                JS_FreeValue(_context.ctx, asjson);
+            } else {
+                argval = JS_ToCStringLen(_context.ctx, &plen, jsArgsConst[i]);
+            }
+            arguments.emplace_back(argval);
+            JS_FreeCString(_context.ctx, argval);
+#endif
         }
 
         auto funcValConst = AsJSValueConst(func);
         auto thisValConst = AsJSValueConst(jsThis);
+
+#ifdef TRACE_FUNCTION_CALLS
+        qjs::Value funcname{_context.ctx, JS_GetPropertyStr(_context.ctx, funcValConst, "name")};
+        auto fname = funcname.as<std::string>();
+
+        std::stringstream strstream;
+        strstream << "CALLING " << fname << "(" << std::endl;
+        for (const auto &aarg : arguments)
+            strstream << aarg << ",";
+        strstream << ")" << std::endl;
+        auto debugLine = strstream.str();
+
+        // Ignore chatty layout and mouse events
+        if ((debugLine.find("topLayout") == std::string::npos) && (debugLine.find("topMouse") == std::string::npos))
+            OutputDebugStringA(debugLine.c_str());
+#endif
 
         jsi::Value result;
         {

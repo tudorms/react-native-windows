@@ -30,6 +30,9 @@
 #include <assert.h>
 #if !defined(_WIN32)
 #include <sys/time.h>
+#else
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #endif
 #include <time.h>
 #include <fenv.h>
@@ -40701,28 +40704,45 @@ static JSValue js___date_now(JSContext *ctx, JSValueConst this_val,
 }
 #endif
 
+
+#if defined(_MSC_VER)
+typedef struct timeval {
+  long tv_sec;
+  long tv_usec;
+} timeval;
+
+int gettimeofday(struct timeval *tp, struct timezone *tzp) {
+  static const uint64_t EPOCH = ((uint64_t)116444736000000000ULL);
+
+  SYSTEMTIME system_time;
+  FILETIME file_time;
+  uint64_t time;
+
+  GetSystemTime(&system_time);
+  SystemTimeToFileTime(&system_time, &file_time);
+  time = ((uint64_t)file_time.dwLowDateTime);
+  time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+  tp->tv_sec = (long)((time - EPOCH) / 10000000L);
+  tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+  return 0;
+}
+#endif
+
 /* OS dependent: return the UTC time in microseconds since 1970. */
 static JSValue js___date_clock(JSContext *ctx, JSValueConst this_val,
                                int argc, JSValueConst *argv)
 {
     int64_t d;
-#if defined(_MSC_VER) // FIXME: implement this
-    d = 42;
-#else
     struct timeval tv;
     gettimeofday(&tv, NULL);
     d = (int64_t)tv.tv_sec * 1000000 + tv.tv_usec;
-#endif
     return JS_NewInt64(ctx, d);
 }
 
 /* OS dependent. d = argv[0] is in ms from 1970. Return the difference
    between local time and UTC time 'd' in minutes */
 static int getTimezoneOffset(int64_t time) {
-#if defined(_WIN32)
-    /* XXX: TODO */
-    return 0;
-#else
     time_t ti;
     struct tm tm;
 
@@ -40748,6 +40768,11 @@ static int getTimezoneOffset(int64_t time) {
         }
     }
     ti = time;
+
+#if defined(_WIN32)
+    localtime(&ti, &tm);
+    return (_mkgmtime(&tm) - mktime(&ti)) / 60;
+#else
     localtime_r(&ti, &tm);
     return -tm.tm_gmtoff / 60;
 #endif
@@ -46945,13 +46970,9 @@ static JSValue get_date_string(JSContext *ctx, JSValueConst this_val,
 
 /* OS dependent: return the UTC time in ms since 1970. */
 static int64_t date_now(void) {
-#if defined(_MSC_VER) // FIXME: implement this
-    return 42;
-#else
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (int64_t)tv.tv_sec * 1000 + (tv.tv_usec / 1000);
-#endif
 }
 
 static JSValue js_date_constructor(JSContext *ctx, JSValueConst new_target,
