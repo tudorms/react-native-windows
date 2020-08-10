@@ -63,7 +63,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>external\quickjs;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;WIN32;_WINDLL;CONFIG_VERSION="2020-04-12";_GNU_SOURCE;CONFIG_BIGNUM;CONFIG_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;WIN32;_WINDLL;_GNU_SOURCE;CONFIG_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4703;4996;4146</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
@@ -81,7 +81,6 @@
   <ItemGroup>
     <ClCompile Include="$(JSI_SourcePath)\jsi\jsi.cpp" />
     <ClCompile Include="external\quickjs\quickjs.c" />
-    <ClCompile Include="external\quickjs\libbf.c" />
     <ClCompile Include="external\quickjs\libunicode.c" />
     <ClCompile Include="external\quickjs\libregexp.c" />
     <ClCompile Include="external\quickjs\cutils.c" />

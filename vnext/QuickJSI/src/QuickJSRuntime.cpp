@@ -1219,7 +1219,11 @@ public:
 
         JS_SetOpaque(funcObj.v, new HostFunctionProxy { std::move(func) });
 
-        JS_DefineProperty(_context.ctx, funcObj.v, Atom{_context.ctx, "length"}.a, JS_NewUint32(_context.ctx, paramCount),
+        JS_DefineProperty(
+            _context.ctx,
+            funcObj.v,
+            Atom{_context.ctx, "length"}.a,
+            JS_NewInt32(_context.ctx, paramCount),
             JS_UNDEFINED, JS_UNDEFINED, JS_PROP_HAS_VALUE | JS_PROP_HAS_CONFIGURABLE);
 
         JSAtom funcNameAtom = AsJSAtomConst(name);

@@ -27,9 +27,6 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
-#if defined(_MSC_VER)
-#include <intrin.h>
-#endif
 
 /* set if CPU is big endian */
 #undef WORDS_BIGENDIAN
@@ -37,15 +34,27 @@
 #if defined(_MSC_VER)
 #define likely(x)       (x)
 #define unlikely(x)     (x)
-#define force_inline __forceinline
-#define no_inline
-#define __maybe_unused
 #else
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
+#endif
+#if defined(_MSC_VER)
+#define force_inline inline
+#else
 #define force_inline inline __attribute__((always_inline))
+#endif
+#if defined(_MSC_VER)
+#define no_inline
+#else
 #define no_inline __attribute__((noinline))
-#define __maybe_unused __attribute__((unused))
+#endif
+//#if defined(_MSC_VER)
+//#define _Atomic(type) type
+//#endif
+
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
 #endif
 
 #define xglue(x, y) x ## y
@@ -68,6 +77,66 @@ enum {
     TRUE = 1,
 };
 #endif
+
+/* Definitions for builtins unavailable on MSVC */
+#if defined(_MSC_VER) && !defined(__clang__)
+#include <intrin.h>
+
+uint32_t __inline __builtin_ctz(uint32_t value) {
+	unsigned long trailing_zero = 0;
+	if (_BitScanForward(&trailing_zero, value))
+		return trailing_zero;
+	return 32;
+}
+
+#if defined(_M_ARM) || defined(_M_X64)
+uint32_t __inline __builtin_ctzll(uint64_t value) {
+	unsigned long trailing_zero = 0;
+	if (_BitScanForward64(&trailing_zero, value))
+		return trailing_zero;
+	return 64;
+}
+#else
+uint32_t __inline __builtin_ctzll(uint64_t value) {
+	if (value == 0)
+		return 64;
+	uint32_t msh = (uint32_t)(value >> 32);
+	uint32_t lsh = (uint32_t)(value & 0xFFFFFFFF);
+	if (lsh != 0)
+		return __builtin_ctz(lsh);
+	return 32 + __builtin_ctz(msh);
+}
+#endif
+
+uint32_t __inline __builtin_clz(uint32_t value) {
+	unsigned long leading_zero = 0;
+	if (_BitScanReverse(&leading_zero, value))
+		return 31 - leading_zero;
+	return 32;
+}
+
+#if defined(_M_ARM) || defined(_M_X64)
+uint32_t __inline __builtin_clzll(uint64_t value) {
+	unsigned long leading_zero = 0;
+	if (_BitScanReverse64(&leading_zero, value))
+		return 63 - leading_zero;
+	return 64;
+}
+#else
+uint32_t __inline __builtin_clzll(uint64_t value) {
+	if (value == 0)
+		return 64;
+	uint32_t msh = (uint32_t)(value >> 32);
+	uint32_t lsh = (uint32_t)(value & 0xFFFFFFFF);
+	if (msh != 0)
+		return __builtin_clz(msh);
+	return 32 + __builtin_clz(lsh);
+}
+#endif
+
+#define __builtin_ctzl __builtin_ctzll
+#define __builtin_clzl __builtin_clzll
+#endif /* defined(_MSC_VER) && !defined(__clang__) */
 
 void pstrcpy(char *buf, int buf_size, const char *str);
 char *pstrcat(char *buf, int buf_size, const char *s);
@@ -125,82 +194,61 @@ static inline int64_t min_int64(int64_t a, int64_t b)
 /* WARNING: undefined if a = 0 */
 static inline int clz32(unsigned int a)
 {
-#if defined(_MSC_VER)
-    unsigned long ret = 0;
-    _BitScanReverse(&ret, a);
-    return (int)ret;
-#else
     return __builtin_clz(a);
-#endif
 }
 
 /* WARNING: undefined if a = 0 */
 static inline int clz64(uint64_t a)
 {
-#if defined(_MSC_VER)
-#if _WIN64
-    unsigned long ret = 0;
-    _BitScanReverse64(&ret, a);
-    return (int)ret;
-#else //TODO: check me
-    uint32_t u32 = (a >> 32);
-    uint32_t result = u32 ? clz32(u32) : 32;
-    if (result == 32) {
-      u32 = a & 0xFFFFFFFFUL;
-      result += (u32 ? clz32(u32) : 32);
-    }
-    return result;
-#endif
-#else
     return __builtin_clzll(a);
-#endif
 }
 
 /* WARNING: undefined if a = 0 */
 static inline int ctz32(unsigned int a)
 {
-#if defined(_MSC_VER)
-    unsigned long ret = 0;
-    _BitScanForward(&ret, a);
-    return (int)ret;
-#else
     return __builtin_ctz(a);
-#endif
 }
 
 /* WARNING: undefined if a = 0 */
 static inline int ctz64(uint64_t a)
 {
-#if defined(_MSC_VER)
-    unsigned long ret = 0;
-    _BitScanForward64(&ret, a);
-    return (int)ret;
-#else
     return __builtin_ctzll(a);
-#endif
 }
 
 #if defined(_MSC_VER)
-#pragma pack(push)
-#pragma pack(1)
-#define __attribute__(x) /* */
-#endif
-
+#pragma pack(push,1)
+struct packed_u64 {
+    uint64_t v;
+};
+#pragma pack(pop)
+#else
 struct __attribute__((packed)) packed_u64 {
     uint64_t v;
 };
+#endif
 
+#if defined(_MSC_VER)
+#pragma pack(push,1)
+struct packed_u32 {
+    uint32_t v;
+};
+#pragma pack(pop)
+#else
 struct __attribute__((packed)) packed_u32 {
     uint32_t v;
 };
+#endif
 
+#if defined(_MSC_VER)
+#pragma pack(push,1)
+struct packed_u16 {
+    uint16_t v;
+};
+#pragma pack(pop)
+#else
 struct __attribute__((packed)) packed_u16 {
     uint16_t v;
 };
-
-#if defined(_MSC_VER)
-#pragma pack(pop)
-#undef __attribute__
 #endif
 
 static inline uint64_t get_u64(const uint8_t *tab)
@@ -318,12 +366,13 @@ static inline int dbuf_put_u64(DynBuf *s, uint64_t val)
 {
     return dbuf_put(s, (uint8_t *)&val, 8);
 }
-#if defined(_MSC_VER)
-int dbuf_printf(DynBuf *s, const char *fmt, ...);
-#else
-int __attribute__((format(printf, 2, 3))) dbuf_printf(DynBuf *s,
-                                                      const char *fmt, ...);
+
+int 
+#if !defined(_MSC_VER)
+__attribute__((format(printf, 2, 3)))
 #endif
+dbuf_printf(DynBuf *s, const char *fmt, ...);
+
 void dbuf_free(DynBuf *s);
 static inline BOOL dbuf_error(DynBuf *s) {
     return s->error;

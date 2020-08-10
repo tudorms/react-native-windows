@@ -33,9 +33,6 @@
     <ClCompile Include="external\quickjs\quickjs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="external\quickjs\libbf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="external\quickjs\libunicode.c">
       <Filter>Source Files</Filter>
     </ClCompile>

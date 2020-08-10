@@ -29,6 +29,10 @@
 
 #include "quickjs.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 JSModuleDef *js_init_module_std(JSContext *ctx, const char *module_name);
 JSModuleDef *js_init_module_os(JSContext *ctx, const char *module_name);
 void js_std_add_helpers(JSContext *ctx, int argc, char **argv);
@@ -45,5 +49,9 @@ void js_std_eval_binary(JSContext *ctx, const uint8_t *buf, size_t buf_len,
 void js_std_promise_rejection_tracker(JSContext *ctx, JSValueConst promise,
                                       JSValueConst reason,
                                       JS_BOOL is_handled, void *opaque);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* QUICKJS_LIBC_H */

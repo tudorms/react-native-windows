@@ -269,7 +269,7 @@ static int cr_canonicalize(CharRange *cr)
 }
 
 #ifdef DUMP_REOP
-static __maybe_unused void lre_dump_bytecode(const uint8_t *buf,
+static __attribute__((unused)) void lre_dump_bytecode(const uint8_t *buf,
                                                      int buf_len)
 {
     int pos, len, opcode, bc_len, re_flags, i;
@@ -438,9 +438,8 @@ static int __attribute__((format(printf, 2, 3))) re_parse_error(REParseState *s,
     return -1;
 }
 
-/* If allow_overflow is false, return -1 in case of
-   overflow. Otherwise return INT32_MAX. */
-static int parse_digits(const uint8_t **pp, BOOL allow_overflow)
+/* Return -1 in case of overflow */
+static int parse_digits(const uint8_t **pp)
 {
     const uint8_t *p;
     uint64_t v;
@@ -453,12 +452,8 @@ static int parse_digits(const uint8_t **pp, BOOL allow_overflow)
         if (c < '0' || c > '9')
             break;
         v = v * 10 + c - '0';
-        if (v >= INT32_MAX) {
-            if (allow_overflow)
-                v = INT32_MAX;
-            else
-                return -1;
-        }
+        if (v >= INT32_MAX)
+            return -1;
         p++;
     }
     *pp = p;
@@ -567,7 +562,14 @@ int lre_parse_escape(const uint8_t **pp, int allow_utf16)
         }
         break;
 #if defined(_MSC_VER)
-    case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
 #else
     case '0' ... '7':
 #endif
@@ -1238,27 +1240,14 @@ static int re_parse_term(REParseState *s, BOOL is_backward_dir)
             re_emit_op(s, REOP_prev);
         break;
     case '{':
-        if (s->is_utf16) {
-            return re_parse_error(s, "syntax error");
-        } else if (!is_digit(p[1])) {
-            /* Annex B: we accept '{' not followed by digits as a
-               normal atom */
+        /* As an extension (see ES6 annex B), we accept '{' not
+           followed by digits as a normal atom */
+        if (!is_digit(p[1])) {
+            if (s->is_utf16)
+                goto invalid_quant_count;
             goto parse_class_atom;
-        } else {
-            const uint8_t *p1 = p + 1;
-            /* Annex B: error if it is like a repetition count */
-            parse_digits(&p1, TRUE);
-            if (*p1 == ',') {
-                p1++;
-                if (is_digit(*p1)) {
-                    parse_digits(&p1, TRUE);
-                }
-            }
-            if (*p1 != '}') {
-                goto parse_class_atom;
-            }
         }
-        /* fall thru */
+        /* fall tru */
     case '*':
     case '+':
     case '?':
@@ -1410,14 +1399,22 @@ static int re_parse_term(REParseState *s, BOOL is_backward_dir)
             }
             goto normal_char;
 #if defined(_MSC_VER)
-        case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
 #else
         case '1' ... '9':
 #endif
             {
                 const uint8_t *q = ++p;
                 
-                c = parse_digits(&p, FALSE);
+                c = parse_digits(&p);
                 if (c < 0 || (c >= s->capture_count && c >= re_count_captures(s))) {
                     if (!s->is_utf16) {
                         /* Annex B.1.4: accept legacy octal */
@@ -1514,38 +1511,32 @@ static int re_parse_term(REParseState *s, BOOL is_backward_dir)
             quant_max = 1;
             goto quantifier;
         case '{':
-            {
-                const uint8_t *p1 = p;
-                /* As an extension (see ES6 annex B), we accept '{' not
-                   followed by digits as a normal atom */
-                if (!is_digit(p[1])) {
-                    if (s->is_utf16)
-                        goto invalid_quant_count;
-                    break;
-                }
-                p++;
-                quant_min = parse_digits(&p, TRUE);
-                quant_max = quant_min;
-                if (*p == ',') {
-                    p++;
-                    if (is_digit(*p)) {
-                        quant_max = parse_digits(&p, TRUE);
-                        if (quant_max < quant_min) {
-                        invalid_quant_count:
-                            return re_parse_error(s, "invalid repetition count");
-                        }
-                    } else {
-                        quant_max = INT32_MAX; /* infinity */
-                    }
-                }
-                if (*p != '}' && !s->is_utf16) {
-                    /* Annex B: normal atom if invalid '{' syntax */
-                    p = p1;
-                    break;
-                }
-                if (re_parse_expect(s, &p, '}'))
-                    return -1;
+            /* As an extension (see ES6 annex B), we accept '{' not
+               followed by digits as a normal atom */
+            if (!is_digit(p[1])) {
+                if (s->is_utf16)
+                    goto invalid_quant_count;
+                break;
             }
+            p++;
+            quant_min = parse_digits(&p);
+            if (quant_min < 0) {
+            invalid_quant_count:
+                return re_parse_error(s, "invalid repetition count");
+            }
+            quant_max = quant_min;
+            if (*p == ',') {
+                p++;
+                if (is_digit(*p)) {
+                    quant_max = parse_digits(&p);
+                    if (quant_max < 0 || quant_max < quant_min)
+                        goto invalid_quant_count;
+                } else {
+                    quant_max = INT32_MAX; /* infinity */
+                }
+            }
+            if (re_parse_expect(s, &p, '}'))
+                return -1;
         quantifier:
             greedy = TRUE;
             if (*p == '?') {
@@ -2443,7 +2434,7 @@ static intptr_t lre_exec_backtrack(REExecContext *s, uint8_t **capture,
                 for(;;) {
                     res = lre_exec_backtrack(s, capture, stack, stack_len,
                                              pc1, cptr, TRUE);
-                    if (res == -1)
+                    if (res < 0)
                         return res;
                     if (!res)
                         break;
@@ -2547,8 +2538,7 @@ int main(int argc, char **argv)
         printf("usage: %s regexp input\n", argv[0]);
         exit(1);
     }
-    bc = lre_compile(&len, error_msg, sizeof(error_msg), argv[1],
-                     strlen(argv[1]), 0, NULL);
+    bc = lre_compile(&len, error_msg, sizeof(error_msg), argv[1], 0, 0, NULL);
     if (!bc) {
         fprintf(stderr, "error: %s\n", error_msg);
         exit(1);

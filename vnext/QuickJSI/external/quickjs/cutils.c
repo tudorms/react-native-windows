@@ -166,12 +166,13 @@ int dbuf_putstr(DynBuf *s, const char *str)
     return dbuf_put(s, (const uint8_t *)str, strlen(str));
 }
 
-#if defined(_MSC_VER)
-int dbuf_printf(DynBuf *s, const char *fmt, ...)
-#else
-int __attribute__((format(printf, 2, 3))) dbuf_printf(DynBuf *s,
-                                                      const char *fmt, ...)
+
+
+int 
+#if !defined(_MSC_VER)
+__attribute__((format(printf, 2, 3)))
 #endif
+dbuf_printf(DynBuf *s, const char *fmt, ...)
 {
     va_list ap;
     char buf[128];
@@ -262,20 +263,19 @@ int unicode_from_utf8(const uint8_t *p, int max_len, const uint8_t **pp)
         return c;
     }
 #if defined(_MSC_VER)
-    else if (c < 0xc0)
-        return -1;
-    else if (c < 0xe0)
-        l = 1;
-    else if (c < 0xf0)
-        l = 2;
-    else if (c < 0xf8)
-        l = 3;
-    else if (c < 0xfc)
-        l = 4;
-    else if (c < 0xfe)
-        l = 5;
-    else
-        return -1;
+	if (c >= 0xc0 && c <= 0xdf) {
+		l = 1;
+	} else if (c >= 0xe0 && c <= 0xef) {
+		l = 2;
+	} else if (c >= 0xf0 && c <= 0xf7) {
+		l = 3;
+	} else if (c >= 0xf8 && c <= 0xfb) {
+		l = 4;
+	} else if (c >= 0xfc && c <= 0xfd) {
+		l = 5;
+	} else  {
+		return -1;
+	}
 #else
     switch(c) {
     case 0xc0 ... 0xdf:
@@ -593,6 +593,7 @@ void rqsort(void *base, size_t nmemb, size_t size, cmp_f cmp, void *opaque)
              */
             span = plt - ptr;
             span2 = pi - plt;
+            plt = pi - span;
             lt = i - lt;
             if (span > span2)
                 span = span2;
