@@ -107,6 +107,7 @@
       <Filter>Source Files\Executors</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)QuickJsRuntimeHolder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PackagerConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

@@ -311,12 +311,9 @@ bool TryUpdateFontProperties(const T &element, const std::string &propertyName, 
     } else if (propertyValue.isNull()) {
       element.ClearValue(T::FontWeightProperty());
     }
-
   } else if (propertyName == "fontStyle") {
     if (propertyValue.isString()) {
-      element.FontStyle(
-          (propertyValue.getString() == "italic") ? winrt::Windows::UI::Text::FontStyle::Italic
-                                                  : winrt::Windows::UI::Text::FontStyle::Normal);
+      element.FontStyle((propertyValue.getString() == "italic") ? text::FontStyle::Italic : text::FontStyle::Normal);
     } else if (propertyValue.isNull()) {
       element.ClearValue(T::FontStyleProperty());
     }
@@ -491,11 +488,11 @@ bool TryUpdateOrientation(const T &element, const std::string &propertyName, con
 inline bool
 TryUpdateMouseEvents(ShadowNodeBase *node, const std::string &propertyName, const folly::dynamic &propertyValue) {
   if (propertyName == "onMouseEnter")
-    node->m_onMouseEnter = !propertyValue.isNull() && propertyValue.asBool();
+    node->m_onMouseEnterRegistered = !propertyValue.isNull() && propertyValue.asBool();
   else if (propertyName == "onMouseLeave")
-    node->m_onMouseLeave = !propertyValue.isNull() && propertyValue.asBool();
+    node->m_onMouseLeaveRegistered = !propertyValue.isNull() && propertyValue.asBool();
   else if (propertyName == "onMouseMove")
-    node->m_onMouseMove = !propertyValue.isNull() && propertyValue.asBool();
+    node->m_onMouseMoveRegistered = !propertyValue.isNull() && propertyValue.asBool();
   else
     return false;
 

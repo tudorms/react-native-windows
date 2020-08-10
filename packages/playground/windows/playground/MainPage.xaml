@@ -145,10 +145,10 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center">
                 <ComboBox.Items>
-                    <ComboBoxItem Content="Chakra" />
+                    <ComboBoxItem Content="Chakra" x:Name="x_engineChakra" />
                     <ComboBoxItem Content="Hermes" x:Name="x_engineHermes" />
                     <ComboBoxItem Content="V8" x:Name="x_engineV8" />
-                    <ComboBoxItem Content="QuickJS" />
+                    <ComboBoxItem Content="QuickJS" x:Name="x_engineQuickJS" />
                 </ComboBox.Items>
             </ComboBox>
         </StackPanel>

@@ -27,6 +27,7 @@
 #include <Shared/DevServerHelper.h>
 #include <Shared/ViewManager.h>
 #include <dispatchQueue/dispatchQueue.h>
+#include "ConfigureBundlerDlg.h"
 #include "DevMenu.h"
 #include "IReactContext.h"
 #include "IReactDispatcher.h"
@@ -199,7 +200,9 @@ void ReactInstanceWin::Initialize() noexcept {
   // InitUIManager uses m_legacyReactInstance
   InitUIManager();
 
-  Microsoft::ReactNative::DevMenuManager::InitDevMenu(m_reactContext);
+  Microsoft::ReactNative::DevMenuManager::InitDevMenu(m_reactContext, [weakReactHost = m_weakReactHost]() noexcept {
+    Microsoft::ReactNative::ShowConfigureBundlerDialog(weakReactHost);
+  });
 
   Mso::PostFuture(
       m_uiQueue,
@@ -243,6 +246,13 @@ void ReactInstanceWin::Initialize() noexcept {
 
           devSettings->waitingForDebuggerCallback = GetWaitingForDebuggerCallback();
           devSettings->debuggerAttachCallback = GetDebuggerAttachCallback();
+          devSettings->showDevMenuCallback = [weakThis]() noexcept {
+            if (auto strongThis = weakThis.GetStrongPtr()) {
+              strongThis->m_uiQueue.Post([context = strongThis->m_reactContext]() {
+                Microsoft::ReactNative::DevMenuManager::Show(context->Properties());
+              });
+            }
+          };
 
           // Now that ReactNativeWindows is building outside devmain, it is missing
           // fix given by PR https://github.com/microsoft/react-native-windows/pull/2624 causing
@@ -288,6 +298,7 @@ void ReactInstanceWin::Initialize() noexcept {
               case react::uwp::JSIEngine::Hermes:
 #if defined(USE_HERMES)
                 devSettings->jsiRuntimeHolder = std::make_shared<facebook::react::HermesRuntimeHolder>();
+                devSettings->inlineSourceMap = false;
                 break;
 #endif
               case react::uwp::JSIEngine::V8:

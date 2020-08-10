@@ -462,11 +462,11 @@ bool FrameworkElementViewManager::UpdateProperty(
           const folly::dynamic &innerValue = pair.second;
 
           if (innerName == "min" && innerValue.isNumber()) {
-            DynamicAutomationProperties::SetAccessibilityValueMin(element, static_cast<double>(innerValue.getInt()));
+            DynamicAutomationProperties::SetAccessibilityValueMin(element, innerValue.asDouble());
           } else if (innerName == "max" && innerValue.isNumber()) {
-            DynamicAutomationProperties::SetAccessibilityValueMax(element, static_cast<double>(innerValue.getInt()));
+            DynamicAutomationProperties::SetAccessibilityValueMax(element, innerValue.asDouble());
           } else if (innerName == "now" && innerValue.isNumber()) {
-            DynamicAutomationProperties::SetAccessibilityValueNow(element, static_cast<double>(innerValue.getInt()));
+            DynamicAutomationProperties::SetAccessibilityValueNow(element, innerValue.asDouble());
           } else if (innerName == "text" && innerValue.isString()) {
             auto value = react::uwp::asHstring(innerValue);
             DynamicAutomationProperties::SetAccessibilityValueText(element, value);
@@ -484,9 +484,7 @@ bool FrameworkElementViewManager::UpdateProperty(
       }
     } else if (propertyName == "tooltip") {
       if (propertyValue.isString()) {
-        winrt::TextBlock tooltip = winrt::TextBlock();
-        tooltip.Text(asHstring(propertyValue));
-        winrt::ToolTipService::SetToolTip(element, tooltip);
+        winrt::ToolTipService::SetToolTip(element, winrt::box_value(asHstring(propertyValue)));
       }
     } else if (propertyName == "zIndex") {
       if (propertyValue.isNumber()) {
