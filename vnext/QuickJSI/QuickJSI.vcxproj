@@ -64,7 +64,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>external\quickjs;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;WIN32;_WINDLL;_GNU_SOURCE;CONFIG_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableSpecificWarnings>4703;4996;4146</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4703;4996;4146;4244;4267;4018;4334;$(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>

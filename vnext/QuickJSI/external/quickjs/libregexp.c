@@ -47,6 +47,10 @@
 #define DUMP_REOP
 #endif
 
+#if defined(_MSC_VER)
+#include <malloc.h>
+#endif
+
 typedef enum {
 #define DEF(id, size) REOP_ ## id,
 #include "libregexp-opcode.h"

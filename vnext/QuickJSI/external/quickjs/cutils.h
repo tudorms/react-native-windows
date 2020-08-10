@@ -89,7 +89,7 @@ uint32_t __inline __builtin_ctz(uint32_t value) {
 	return 32;
 }
 
-#if defined(_M_ARM) || defined(_M_X64)
+#if defined(_M_ARM64) || defined(_M_X64)
 uint32_t __inline __builtin_ctzll(uint64_t value) {
 	unsigned long trailing_zero = 0;
 	if (_BitScanForward64(&trailing_zero, value))
@@ -115,7 +115,7 @@ uint32_t __inline __builtin_clz(uint32_t value) {
 	return 32;
 }
 
-#if defined(_M_ARM) || defined(_M_X64)
+#if defined(_M_ARM64) || defined(_M_X64)
 uint32_t __inline __builtin_clzll(uint64_t value) {
 	unsigned long leading_zero = 0;
 	if (_BitScanReverse64(&leading_zero, value))
