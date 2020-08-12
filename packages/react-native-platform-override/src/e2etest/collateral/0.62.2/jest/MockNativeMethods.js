@@ -9,4 +9,13 @@
 
 'use strict';
 
-module.exports = require('../UnimplementedViews/UnimplementedView');
+const MockNativeMethods = {
+  measure: jest.fn(),
+  measureInWindow: jest.fn(),
+  measureLayout: jest.fn(),
+  setNativeProps: jest.fn(),
+  focus: jest.fn(),
+  blur: jest.fn(),
+};
+
+module.exports = MockNativeMethods;
