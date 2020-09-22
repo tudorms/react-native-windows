@@ -14,6 +14,7 @@
 #include "Microsoft.ReactNative/IReactNotificationService.h"
 #include "Microsoft.ReactNative/Threading/MessageQueueThreadFactory.h"
 
+#include "../../codegen/NativeAccessibilityInfoSpec.g.h"
 #include "../../codegen/NativeAppStateSpec.g.h"
 #include "../../codegen/NativeClipboardSpec.g.h"
 #include "../../codegen/NativeDevSettingsSpec.g.h"
@@ -31,6 +32,7 @@
 #include "DevMenu.h"
 #include "IReactContext.h"
 #include "IReactDispatcher.h"
+#include "Modules/AccessibilityInfoModule.h"
 #include "Modules/AlertModule.h"
 #include "Modules/AppStateModule.h"
 #include "Modules/ClipboardModule.h"
@@ -151,6 +153,12 @@ void ReactInstanceWin::LoadModules(
     }
   };
 
+  registerTurboModule(
+      L"AccessibilityInfo",
+      winrt::Microsoft::ReactNative::MakeTurboModuleProvider<
+          ::Microsoft::ReactNative::AccessibilityInfo,
+          ::Microsoft::ReactNativeSpecs::AccessibilityInfoSpec>());
+
   registerTurboModule(L"Alert", winrt::Microsoft::ReactNative::MakeModuleProvider<::Microsoft::ReactNative::Alert>());
 
   registerTurboModule(
@@ -265,11 +273,13 @@ void ReactInstanceWin::Initialize() noexcept {
           devSettings->debuggerConsoleRedirection =
               false; // JSHost::ChangeGate::ChakraCoreDebuggerConsoleRedirection();
 
-          // Acquire default modules and then populate with custom modules
+          // Acquire default modules and then populate with custom modules.
+          // Note that some of these have custom thread affinity.
           std::vector<facebook::react::NativeModuleDescription> cxxModules = react::uwp::GetCoreModules(
               m_uiManager.Load(),
               m_batchingUIThread,
               m_uiMessageThread.Load(),
+              m_jsMessageThread.Load(),
               std::move(m_appTheme),
               std::move(m_appearanceListener),
               m_legacyReactInstance);

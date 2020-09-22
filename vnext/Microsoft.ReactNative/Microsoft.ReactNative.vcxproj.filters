@@ -65,6 +65,9 @@
     <ClCompile Include="CxxReactUWP\JSBigString.cpp">
       <Filter>CxxReactUWP</Filter>
     </ClCompile>
+    <ClCompile Include="Modules\AccessibilityInfoModule.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
     <ClCompile Include="Modules\Animated\AdditionAnimatedNode.cpp">
       <Filter>Modules\Animated</Filter>
     </ClCompile>
@@ -156,9 +159,6 @@
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Modules\LinkingManagerModule.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Modules\LocationObserverModule.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Modules\LogBoxModule.cpp">
@@ -404,6 +404,9 @@
     <ClInclude Include="Base\CoreNativeModules.h">
       <Filter>Base</Filter>
     </ClInclude>
+    <ClInclude Include="Modules\AccessibilityInfoModule.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
     <ClInclude Include="Modules\Animated\AdditionAnimatedNode.h">
       <Filter>Modules\Animated</Filter>
     </ClInclude>
@@ -507,9 +510,6 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Modules\LinkingManagerModule.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\LocationObserverModule.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Modules\LogBoxModule.h">

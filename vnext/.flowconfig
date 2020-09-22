@@ -40,6 +40,7 @@
 
 ; Ignore react-native-windows' target folder. Flow is not compiled with long path support and after running unittests these folders have long paths
 .*/node_modules/react-native-windows/target/.*
+.*/node_modules/react-native-windows/Microsoft.ReactNative.Managed.CodeGen.UnitTests/.*
 .target/.*
 
 ; These files dont need to be checked and just increase the build time
@@ -106,8 +107,8 @@ suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
 suppress_type=$FlowFixMeEmpty
 
-experimental.well_formed_exports=true
-experimental.types_first=true
+well_formed_exports=true
+types_first=true
 experimental.abstract_locations=true
 
 [lints]
@@ -133,4 +134,4 @@ untyped-import
 untyped-type-import
 
 [version]
-^0.127.0
+^0.128.0
