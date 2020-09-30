@@ -66,6 +66,36 @@
     <ClCompile Include="$(FollyDir)\folly\ScopeGuard.cpp" />
     <ClCompile Include="$(FollyDir)\folly\Unicode.cpp" />
     <ClCompile Include="$(FollyDir)\folly\memory\detail\MallocImpl.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\futures\detail\Core.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\futures\Future.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\detail\AsyncTrace.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\Executor.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\ExceptionWrapper.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\executors\InlineExecutor.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\executors\QueuedImmediateExecutor.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\Try.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\synchronization\AsymmetricMemoryBarrier.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\synchronization\DistributedMutex.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\synchronization\SanitizeThread.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\synchronization\Hazptr.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\synchronization\ParkingLot.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\io\async\Request.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\detail\ThreadLocalDetail.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\detail\Futex.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\detail\UniqueInstance.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\detail\AtFork.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\PThread.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\SysMembarrier.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\SysResource.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\SysMman.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\Time.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\Unistd.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\portability\Sockets.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\concurrency\CacheLocality.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\lang\CString.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\SharedMutex.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\net\detail\SocketFileDescriptorMap.cpp" />
+    <ClCompile Include="$(FollyDir)\folly\net\NetOps.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(FollyDir)\folly\AtomicBitSet.h" />
@@ -247,10 +277,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ReactNativeWindowsDir)stubs;$(FollyDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>FOLLY_NO_CONFIG;NOMINMAX;_CRT_SECURE_NO_WARNINGS;WINAPI_PARTITION_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ReactNativeWindowsDir)stubs;$(FollyDir);d:\work\vcpkg\installed\x64-windows\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>FOLLY_NO_CONFIG;NOMINMAX;_CRT_SECURE_NO_WARNINGS;WINAPI_PARTITION_APP;_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedUsingFiles />
-      <DisableSpecificWarnings>4018;4146;4244;4251;4267;4293;4305;4800;4804;4310;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4146;4244;4251;4267;4293;4305;4800;4804;4310;4541;4459;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
