@@ -3,7 +3,7 @@
 
 #pragma once
 #include <JSI/Shared/RuntimeHolder.h>
-
+#include <cxxreact/MessageQueueThread.h>
 #include <jsi/jsi.h>
 #include <thread>
 
