@@ -58,8 +58,9 @@ export default class GitReactFileRepository
 
     if (!(await gitClient.checkIsRepo())) {
       await gitClient.init();
-      await gitClient.addConfig('core.filemode', 'false');
       await gitClient.addConfig('core.autocrlf', 'input');
+      await gitClient.addConfig('core.filemode', 'false');
+      await gitClient.addConfig('core.ignorecase', 'true');
     }
 
     return new GitReactFileRepository(dir, gitClient);
@@ -111,6 +112,8 @@ export default class GitReactFileRepository
     newContent: Buffer,
   ): Promise<string> {
     return this.usingVersion(reactNativeVersion, async () => {
+      await this.ensureFile(filename);
+
       try {
         await this.fileRepo.writeFile(filename, newContent);
         const patch = await this.gitClient.diff([
@@ -120,12 +123,6 @@ export default class GitReactFileRepository
           '--',
           filename,
         ]);
-
-        if (patch.length === 0) {
-          throw new Error(
-            `Generated patch for ${filename} was empty. Is it identical to the original?`,
-          );
-        }
 
         return patch;
       } finally {
@@ -147,6 +144,8 @@ export default class GitReactFileRepository
     patchContent: string,
   ): Promise<{patchedFile: Buffer | null; hasConflicts: boolean}> {
     return this.usingVersion(reactNativeVersion, async () => {
+      await this.ensureFile(filename);
+
       try {
         await this.fileRepo.writeFile('rnwgit.patch', patchContent);
 
@@ -263,9 +262,7 @@ export default class GitReactFileRepository
     });
     if (!commitInfo.ok) {
       throw new Error(
-        `Unable to query Github for commit '${shortHash}' Status: '${
-          commitInfo.statusText
-        }'`,
+        `Unable to query Github for commit '${shortHash}' Status: '${commitInfo.statusText}'`,
       );
     }
 
@@ -274,5 +271,16 @@ export default class GitReactFileRepository
 
   private static async defaultGitDirectory(): Promise<string> {
     return path.join(os.tmpdir(), (await getNpmPackage()).name, 'git');
+  }
+
+  private async ensureFile(filename: string): Promise<void> {
+    const stat = await this.fileRepo.stat(filename);
+    if (stat === 'none') {
+      throw new Error(
+        `Cannot find file "${filename}" in react-native@${this.checkedOutVersion}`,
+      );
+    } else if (stat === 'directory') {
+      throw new Error(`"${filename}" refers to a directory`);
+    }
   }
 }

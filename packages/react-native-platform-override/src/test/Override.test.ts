@@ -20,7 +20,7 @@ type OverrideConstructor = new (...args: any[]) => Override;
 type TestCase<T extends OverrideConstructor> = [
   string,
   T,
-  ConstructorParameters<T>[0]
+  ConstructorParameters<T>[0],
 ];
 
 function testCase<T extends OverrideConstructor>(
@@ -202,5 +202,49 @@ test.each(directoryOverrides)(
     const override = new ovrClass({...args, baseDirectory: 'a\\b\\c'});
     const serialized = override.serialize() as any;
     expect(serialized.baseDirectory).toEqual('a/b/c');
+  },
+);
+
+test.each(baseFileOverrides)(
+  'serialize - Default baseVersion Matches (%s)',
+  (_, ovrClass, args) => {
+    const override = new ovrClass({...args, baseFile: 'path\\to\\bar.js'});
+    const serialized = override.serialize({
+      defaultBaseVersion: '0.62.2',
+    }) as any;
+    expect(serialized.baseVersion).toBeUndefined();
+  },
+);
+
+test.each(directoryOverrides)(
+  'serialize - Default baseVersion Matches (%s)',
+  (_, ovrClass, args) => {
+    const override = new ovrClass({...args, baseDirectory: 'a\\b\\c'});
+    const serialized = override.serialize({
+      defaultBaseVersion: '0.62.2',
+    }) as any;
+    expect(serialized.baseVersion).toBeUndefined();
+  },
+);
+
+test.each(baseFileOverrides)(
+  'serialize - Default baseVersion Mismatch (%s)',
+  (_, ovrClass, args) => {
+    const override = new ovrClass({...args, baseFile: 'path\\to\\bar.js'});
+    const serialized = override.serialize({
+      defaultBaseVersion: '0.60.0',
+    }) as any;
+    expect(serialized.baseVersion).toBe('0.62.2');
+  },
+);
+
+test.each(directoryOverrides)(
+  'serialize - Default baseVersion Mismatch (%s)',
+  (_, ovrClass, args) => {
+    const override = new ovrClass({...args, baseDirectory: 'a\\b\\c'});
+    const serialized = override.serialize({
+      defaultBaseVersion: '0.60.0',
+    }) as any;
+    expect(serialized.baseVersion).toBe('0.62.2');
   },
 );

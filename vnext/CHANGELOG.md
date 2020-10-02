@@ -1,8 +1,30 @@
 # Change Log - react-native-windows
 
-This log was last generated on Wed, 30 Sep 2020 05:06:49 GMT and should not be manually modified.
+This log was last generated on Fri, 02 Oct 2020 05:05:22 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.0-canary.176
+
+Fri, 02 Oct 2020 05:05:22 GMT
+
+### Changes
+
+- Expose getters for some instance settings on reactcontext (30809111+acoates-ms@users.noreply.github.com)
+- Integrate 8/5 Nightly RN Build (ngerlem@microsoft.com)
+- Image - fix pre-1903 crash (email not defined)
+- Integrate 8/17 Nightly RN Build (ngerlem@microsoft.com)
+- Use lessthrow_await_adapter in Desktop WebSocket resource (julio.rocha@microsoft.com)
+
+## 0.0.0-canary.175
+
+Thu, 01 Oct 2020 05:08:11 GMT
+
+### Changes
+
+- Integrate 7/29 Nightly Build (ngerlem@microsoft.com)
+- Remove Microsoft user names from sourcecode (dannyvv@microsoft.com)
+- ESLint Fixup (ngerlem@microsoft.com)
 
 ## 0.0.0-canary.174
 
