@@ -14,7 +14,8 @@ namespace Microsoft.ReactNative {
   enum JSIEngine {
     Chakra = 0,
     Hermes = 1,
-    V8 = 2
+    V8 = 2,
+    QuickJS = 3
   };
 
   [webhosthidden]

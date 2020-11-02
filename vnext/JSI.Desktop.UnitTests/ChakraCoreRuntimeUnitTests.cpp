@@ -7,6 +7,8 @@
 #include <V8JsiRuntime.h>
 #endif
 
+#include <QuickJSRuntime.h>
+
 // TODO: #2730 Introduces a vcxitem for shared test code and move this
 // there.
 #include <Threading/MessageQueueThreadFactory.h>
@@ -57,3 +59,14 @@ RuntimeFactory getV8Runtime() {
 
 INSTANTIATE_TEST_CASE_P(V8RuntimeTest, JsiRuntimeUnitTests, ::testing::Values(getV8Runtime()));
 #endif
+
+RuntimeFactory getQuickJSRuntime() {
+  return []() -> std::unique_ptr<Runtime> {
+    quickjs::QuickJSRuntimeArgs args;
+
+    return quickjs::makeQuickJSRuntime(std::move(args));
+  };
+}
+
+INSTANTIATE_TEST_CASE_P(QuickJSRuntimeTest, JsiRuntimeUnitTests, ::testing::Values(getQuickJSRuntime()));
+INSTANTIATE_TEST_CASE_P(QuickJSRuntimeTest_More, JsiRuntimeUnitTests_Chakra, ::testing::Values(getQuickJSRuntime()));

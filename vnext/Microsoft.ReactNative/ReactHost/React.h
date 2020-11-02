@@ -47,6 +47,7 @@ enum class JSIEngine : int32_t {
   Chakra = 0, // Use the JSIExecutorFactory with ChakraRuntime
   Hermes = 1, // Use the JSIExecutorFactory with Hermes
   V8 = 2, // Use the JSIExecutorFactory with V8
+  QuickJS = 3, // Use the JSIExecutorFactory with QuickJS
 };
 
 using OnErrorCallback = Mso::Functor<void(const Mso::ErrorCode &)>;
