@@ -32,6 +32,7 @@ MainPage::MainPage() {
   x_engineChakra().IsEnabled(true);
   x_engineHermes().IsEnabled(true);
   x_engineV8().IsEnabled(true);
+  x_engineQuickJS().IsEnabled(true);
 
   x_JsEngine().SelectedIndex(0);
 }

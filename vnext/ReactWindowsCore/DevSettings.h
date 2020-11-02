@@ -31,8 +31,9 @@ enum class JSIEngineOverride : int32_t {
   Hermes = 3, // Use the JSIExecutorFactory with Hermes
   V8 = 4, // Use the JSIExecutorFactory with V8
   V8Lite = 5, // Use the JSIExecutorFactory with V8Lite
+  QuickJS = 6, // Use the JSIExecutorFactory with the QuickJS engine
 
-  Last = V8Lite
+  Last = QuickJS
 };
 
 struct ChakraBundleMetadata {

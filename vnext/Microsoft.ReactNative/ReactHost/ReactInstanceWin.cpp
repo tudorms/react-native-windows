@@ -39,6 +39,8 @@
 #include "V8JSIRuntimeHolder.h"
 #endif // USE_V8
 
+#include "QuickJSRuntimeHolder.h"
+
 #include "RedBox.h"
 
 #include <tuple>
@@ -256,6 +258,9 @@ void ReactInstanceWin::Initialize() noexcept {
                     devSettings, m_jsMessageThread.Load(), std::move(scriptStore), std::move(preparedScriptStore));
                 break;
 #endif
+              case react::uwp::JSIEngine::QuickJS:
+                devSettings->jsiRuntimeHolder = std::make_shared<facebook::react::QuickJSRuntimeHolder>();
+                break;
               case react::uwp::JSIEngine::Chakra:
                 if (m_options.LegacySettings.EnableByteCodeCaching ||
                     !m_options.LegacySettings.ByteCodeFileUri.empty()) {

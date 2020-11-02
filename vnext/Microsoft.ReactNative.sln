@@ -115,6 +115,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MIDL", "MIDL", "{A7A199BB-2
 		PropertySheets\MIDL\MidlRT.xml = PropertySheets\MIDL\MidlRT.xml
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuickJSI", "QuickJSI\QuickJSI.vcxproj", "{6028059E-8121-438C-8993-646CF3B4FB2D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		JSI\Shared\JSI.Shared.vcxitems*{0cc28589-39e4-4288-b162-97b959f8b843}*SharedItemsImports = 9
