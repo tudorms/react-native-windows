@@ -67,7 +67,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>external\quickjs;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external\quickjs;external;src;$(JSI_SourcePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;WIN32;_WINDLL;_GNU_SOURCE;CONFIG_WIN32;CREATE_SHARED_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4703;4996;4146;4244;4267;4018;4334;$(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
@@ -83,7 +83,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(ReactNativeDir)\ReactCommon\jsi\jsi\jsi.cpp" />
+    <ClCompile Include="$(JSI_SourcePath)\jsi\jsi.cpp" />
     <ClCompile Include="external\quickjs\quickjs.c" />
     <ClCompile Include="external\quickjs\libunicode.c" />
     <ClCompile Include="external\quickjs\libregexp.c" />
@@ -91,9 +91,9 @@
     <ClCompile Include="src\QuickJSRuntime.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ReactNativeDir)\ReactCommon\jsi\jsi\instrumentation.h" />
-    <ClInclude Include="$(ReactNativeDir)\ReactCommon\jsi\jsi\jsi-inl.h" />
-    <ClInclude Include="$(ReactNativeDir)\ReactCommon\jsi\jsi\jsi.h" />
+    <ClInclude Include="$(JSI_SourcePath)\jsi\instrumentation.h" />
+    <ClInclude Include="$(JSI_SourcePath)\jsi\jsi-inl.h" />
+    <ClInclude Include="$(JSI_SourcePath)\jsi\jsi.h" />
     <ClInclude Include="external\quickjspp.hpp" />
     <ClInclude Include="external\quickjs\quickjs.h" />
     <ClInclude Include="src\QuickJSRuntime.h" />

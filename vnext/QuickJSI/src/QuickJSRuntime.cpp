@@ -1050,7 +1050,7 @@ public:
         ThrowJSError();
     }
 
-    virtual jsi::Value lockWeakObject(jsi::WeakObject&) override try
+    virtual jsi::Value lockWeakObject(const jsi::WeakObject&) override try
     {
         // TODO: NYI
         std::abort();
