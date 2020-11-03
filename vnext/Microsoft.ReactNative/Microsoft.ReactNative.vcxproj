@@ -641,6 +641,9 @@
     <ProjectReference Include="..\ReactCommon\ReactCommon.vcxproj">
       <Project>{a9d95a91-4db7-4f72-beb6-fe8a5c89bfbd}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\QuickJSI\QuickJSI.vcxproj">
+      <Project>{6028059e-8121-438c-8993-646cf3b4fb2d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="DevMenuControl.xaml">
