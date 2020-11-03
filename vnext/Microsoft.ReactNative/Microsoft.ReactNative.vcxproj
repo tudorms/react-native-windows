@@ -609,6 +609,9 @@
     <ProjectReference Include="..\ReactWindowsCore\ReactWindowsCore.vcxproj">
       <Project>{11c084a3-a57c-4296-a679-cac17b603144}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\QuickJSI\QuickJSI.vcxproj">
+      <Project>{6028059e-8121-438c-8993-646cf3b4fb2d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
