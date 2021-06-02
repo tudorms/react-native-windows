@@ -17,12 +17,11 @@ namespace react {
 
 class TaskRunnerAdapter : public v8runtime::JSITaskRunner {
  public:
-  TaskRunnerAdapter(std::shared_ptr<facebook::react::MessageQueueThread> jsQueue) : jsQueue_(std::move(jsQueue))
-    {}
+  TaskRunnerAdapter(std::shared_ptr<facebook::react::MessageQueueThread> jsQueue) : jsQueue_(std::move(jsQueue)) {}
 
   void postTask(std::unique_ptr<v8runtime::JSITask> task) override {
-      std::shared_ptr<v8runtime::JSITask> shared_task(task.release());
-      jsQueue_->runOnQueue([shared_task2 = std::move(shared_task)]() { shared_task2->run(); });
+    std::shared_ptr<v8runtime::JSITask> shared_task(task.release());
+    jsQueue_->runOnQueue([shared_task2 = std::move(shared_task)]() { shared_task2->run(); });
   }
 
  private:
