@@ -6,15 +6,22 @@
 #include "queueService.h"
 #include "taskQueue.h"
 #include "winrt/Windows.Foundation.h"
-#include "winrt/Windows.System.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
+#ifndef USE_WINUI3
+#include "winrt/Windows.System.h"
 using namespace Windows::System;
+#else
+#include "winrt/Microsoft.System.h"
+using namespace Microsoft::System;
+#endif
 
 namespace Mso {
 
 namespace {
+
+using IInspectable = winrt::Windows::Foundation::IInspectable;
 
 // TODO: consider to move it into its own liblet
 template <class TKey, class TValue>

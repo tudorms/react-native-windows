@@ -1,8 +1,726 @@
 # Change Log - react-native-windows
 
-This log was last generated on Mon, 18 Jan 2021 05:08:29 GMT and should not be manually modified.
+This log was last generated on Tue, 25 May 2021 19:36:43 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.0-canary.317
+
+Tue, 25 May 2021 19:36:43 GMT
+
+### Changes
+
+- Prepare files for default branch rename (dannyvv@microsoft.com)
+- add forked ToAscii.h unblocking CI (agnel@microsoft.com)
+
+## 0.0.0-canary.316
+
+Fri, 21 May 2021 21:40:00 GMT
+
+### Changes
+
+- [Fabric] Add support for PlatformColor (30809111+acoates-ms@users.noreply.github.com)
+- Fixes bug in BatchingEventEmitter (erozell@outlook.com)
+- folly update (agnel@microsoft.com)
+
+## 0.0.0-canary.315
+
+Fri, 21 May 2021 05:17:18 GMT
+
+### Patches
+
+- Bump react-native-platform-override to v1.4.14 (ngerlem@microsoft.com)
+
+### Changes
+
+- Integrate Apr 28 (base of 0.65) Nightly RN Build (ngerlem@microsoft.com)
+
+## 0.0.0-canary.314
+
+Wed, 19 May 2021 05:06:54 GMT
+
+### Changes
+
+- Fix transitive dependencies for C# nuget-based apps (jthysell@microsoft.com)
+
+## 0.0.0-canary.313
+
+Tue, 18 May 2021 05:05:13 GMT
+
+### Changes
+
+- Fabric: Add support view View.opacity and View.borderRadius (30809111+acoates-ms@users.noreply.github.com)
+- Fabric: Add support for Image events, blurRadius and tintColor (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.312
+
+Mon, 17 May 2021 05:11:32 GMT
+
+### Changes
+
+- Exit early during text transform upward tree traversal. (igklemen@microsoft.com)
+
+## 0.0.0-canary.311
+
+Sat, 15 May 2021 05:06:21 GMT
+
+### Changes
+
+- Enabling Hermes Inspector (anandrag@microsoft.com)
+
+## 0.0.0-canary.310
+
+Fri, 14 May 2021 05:06:39 GMT
+
+### Changes
+
+- Use memory mapping for ScriptStore::tryGetPreparedScript (julio.rocha@microsoft.com)
+
+## 0.0.0-canary.309
+
+Thu, 13 May 2021 05:11:48 GMT
+
+### Changes
+
+- Hook up view component codegen (30809111+acoates-ms@users.noreply.github.com)
+- Emit TextInput onChangeText before onSelectionChange (erozell@outlook.com)
+
+## 0.0.0-canary.308
+
+Tue, 11 May 2021 05:06:47 GMT
+
+### Changes
+
+- Enable C++20 builds (asklar@microsoft.com)
+- Generate cgmanifest.json for downloaded source dependencies (jthysell@microsoft.com)
+- Combine ReactRootView and ReactRootControl (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.307
+
+Sun, 09 May 2021 05:06:22 GMT
+
+### Changes
+
+- Fix warnings and improve C++ includes (vmorozov@microsoft.com)
+- Move fmt project into 'Dependencies (External)' folder (vmorozov@microsoft.com)
+
+## 0.0.0-canary.306
+
+Sat, 08 May 2021 05:05:56 GMT
+
+### Changes
+
+- Update Button Styling for Windows (34109996+chiaramooney@users.noreply.github.com)
+- Remove legacy UWP WebSocket module (julio.rocha@microsoft.com)
+
+## 0.0.0-canary.305
+
+Fri, 07 May 2021 05:07:30 GMT
+
+### Changes
+
+- Fix ReactContext::DispatchEvent (vmorozov@microsoft.com)
+
+## 0.0.0-canary.304
+
+Wed, 05 May 2021 16:27:31 GMT
+
+### Changes
+
+- Rename remaining react::uwp namespaces to Microsoft::ReactNative (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.303
+
+Tue, 04 May 2021 05:10:45 GMT
+
+### Changes
+
+- Fix Text foreground overwritten by backgroundColor. (igklemen@microsoft.com)
+- If initial value is set, updated TextInput.value changes will not be reflected (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.302
+
+Sat, 01 May 2021 05:05:57 GMT
+
+### Changes
+
+- Forked folly for SDL compliance (agnel@microsoft.com)
+- Update brush cache when theme changes (asklar@microsoft.com)
+
+## 0.0.0-canary.301
+
+Fri, 30 Apr 2021 05:06:16 GMT
+
+### Changes
+
+- Allow `lineHeight` settings less than font height (erozell@outlook.com)
+- Remove incorrect mapping from virtual key 192 (erozell@outlook.com)
+
+## 0.0.0-canary.300
+
+Thu, 29 Apr 2021 05:07:20 GMT
+
+### Changes
+
+- Adds 'autoFocus' prop to TextInput (erozell@outlook.com)
+- Integrate April 22 RN Nightly Build (ngerlem@microsoft.com)
+- Fix MSBuild Bundling When Path Contains Spaces (ngerlem@microsoft.com)
+- Remove Forking Due to "acceptsKeyboardFocus" Invariant Checks (ngerlem@microsoft.com)
+- Remove ARM32 Support (ngerlem@microsoft.com)
+- Update to latest @types/react-native (ngerlem@microsoft.com)
+- Remove version from ExperimentalFeatures.props links (ngerlem@microsoft.com)
+
+## 0.0.0-canary.299
+
+Wed, 28 Apr 2021 05:07:02 GMT
+
+### Changes
+
+- Changes required to run in a Reunion app (asklar@microsoft.com)
+- Very early fabric implementation (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.298
+
+Tue, 27 Apr 2021 05:09:48 GMT
+
+### Changes
+
+- Update Microsoft.ChakraCore to 1.11.24 (jthysell@microsoft.com)
+- Fix CI after change to Format library (dannyvv@microsoft.com)
+
+## 0.0.0-canary.297
+
+Sat, 24 Apr 2021 05:06:52 GMT
+
+### Changes
+
+- Replace fmt stub with real implementation (30809111+acoates-ms@users.noreply.github.com)
+- Adds declarative props to clear/submit TextInput (erozell@outlook.com)
+- Integration Apr 1 - Apr 15 (34109996+chiaramooney@users.noreply.github.com)
+- Remove unused ChakraNativeModules files (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.296
+
+Fri, 23 Apr 2021 05:08:07 GMT
+
+### Changes
+
+- restore some SDL warnings (agnel@microsoft.com)
+
+## 0.0.0-canary.295
+
+Wed, 21 Apr 2021 05:06:31 GMT
+
+### Changes
+
+- restore some SDL warnings (agnel@microsoft.com)
+
+## 0.0.0-canary.294
+
+Tue, 20 Apr 2021 05:06:21 GMT
+
+### Changes
+
+- fix filter project merge (asklar@microsoft.com)
+
+## 0.0.0-canary.293
+
+Sat, 17 Apr 2021 05:08:13 GMT
+
+### Changes
+
+- Layout wrongly overwrites width/height coming from view manager (asklar@microsoft.com)
+
+## 0.0.0-canary.292
+
+Fri, 16 Apr 2021 05:08:38 GMT
+
+### Changes
+
+- Integrate 4/1 nightly RN build. (igklemen@microsoft.com)
+- Calling UIManager.dispatchViewManagerCommand should trigger updates (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.291
+
+Thu, 15 Apr 2021 05:09:36 GMT
+
+### Changes
+
+- Fix XAML Visibility for `display:none` (agnel@microsoft.com)
+- re-enabling 4267 & 4100 (agnel@microsoft.com)
+
+## 0.0.0-canary.290
+
+Wed, 14 Apr 2021 05:08:14 GMT
+
+### Changes
+
+- Enable any platform color to be used in PlatformColor() (asklar@microsoft.com)
+
+## 0.0.0-canary.289
+
+Tue, 13 Apr 2021 05:07:37 GMT
+
+### Changes
+
+- Fixes bug where raw text update overwrites all text (erozell@outlook.com)
+- Add functionality to setAccessibilityFocus method (34109996+chiaramooney@users.noreply.github.com)
+
+## 0.0.0-canary.288
+
+Sat, 10 Apr 2021 05:06:27 GMT
+
+### Changes
+
+- Allow swapping to System Chakra at runtime. (julio.rocha@microsoft.com)
+- Fixes textTransform recursion (erozell@outlook.com)
+- Integrate 3/18 nightly RN build. (igklemen@microsoft.com)
+
+## 0.0.0-canary.287
+
+Thu, 08 Apr 2021 05:07:22 GMT
+
+### Changes
+
+- Fix onKeyDown/onKeyUp events not firing after reload (stecrain@microsoft.com)
+
+## 0.0.0-canary.286
+
+Tue, 06 Apr 2021 05:05:03 GMT
+
+### Changes
+
+- Revert "Fix touch event crash (#6692)" (igklemen@microsoft.com)
+
+## 0.0.0-canary.285
+
+Fri, 02 Apr 2021 05:07:19 GMT
+
+### Changes
+
+- Add onKeyDown/onKeyUp to Pressable. (igklemen@microsoft.com)
+
+## 0.0.0-canary.284
+
+Thu, 01 Apr 2021 05:07:27 GMT
+
+### Changes
+
+- Update to new Folly version (asklar@microsoft.com)
+
+## 0.0.0-canary.283
+
+Sun, 28 Mar 2021 05:06:13 GMT
+
+### Changes
+
+- Implement JSI getOwnPropertyDescriptor (asklar@microsoft.com)
+
+## 0.0.0-canary.282
+
+Fri, 26 Mar 2021 21:27:59 GMT
+
+### Changes
+
+- Fix some doc typos, generate docs in CI (asklar@microsoft.com)
+
+## 0.0.0-canary.281
+
+Fri, 26 Mar 2021 05:06:37 GMT
+
+### Changes
+
+- Enable libraries to use NuGet too (avoid mdmerge MDM2009 error) (asklar@microsoft.com)
+- Suppress onLayout event when layout has not changed (erozell@outlook.com)
+
+## 0.0.0-canary.280
+
+Thu, 25 Mar 2021 05:06:57 GMT
+
+### Changes
+
+- Fix app template to use app.json's name for main component name (jthysell@microsoft.com)
+
+## 0.0.0-canary.279
+
+Tue, 23 Mar 2021 05:06:08 GMT
+
+### Changes
+
+- Fix c++20 issues (asklar@microsoft.com)
+
+## 0.0.0-canary.278
+
+Fri, 19 Mar 2021 05:12:09 GMT
+
+### Changes
+
+- Add retries to Folly download since it sometimes fails in CI (asklar@microsoft.com)
+- Make BaseWebSocketResource destructor noexcept (julio.rocha@microsoft.com)
+- Enable overriding WinUI and SDK versions via ExperimentalFeatures.props (asklar@microsoft.com)
+
+## 0.0.0-canary.277
+
+Thu, 18 Mar 2021 05:08:24 GMT
+
+### Changes
+
+- Add doc comments to IDL files (vmorozov@microsoft.com)
+
+## 0.0.0-canary.276
+
+Wed, 17 Mar 2021 05:18:22 GMT
+
+### Changes
+
+- Fix redbox on boot when using web debugging (30809111+acoates-ms@users.noreply.github.com)
+- Minor docs update for ReactDispatcherHelper (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.275
+
+Tue, 16 Mar 2021 05:07:08 GMT
+
+### Changes
+
+- AzDO image now installs uwp package 6.2.11, not 6.2.10; Update Codegen UnitTest (asklar@microsoft.com)
+
+## 0.0.0-canary.274
+
+Sun, 14 Mar 2021 05:06:38 GMT
+
+### Changes
+
+- update to newer cppwinrt, 2-3% reduction in binary size (asklar@microsoft.com)
+
+## 0.0.0-canary.273
+
+Sat, 13 Mar 2021 05:08:04 GMT
+
+### Changes
+
+- Add method support for Xaml Islands (34109996+chiaramooney@users.noreply.github.com)
+- Change TextInput cursor behavior (erozell@outlook.com)
+
+## 0.0.0-canary.272
+
+Fri, 12 Mar 2021 05:07:46 GMT
+
+### Changes
+
+- Include Hermes NuGet Package By Default (ngerlem@microsoft.com)
+- Raise Instance notifications in JSDispatcher thread (vmorozov@microsoft.com)
+
+## 0.0.0-canary.271
+
+Thu, 11 Mar 2021 05:07:32 GMT
+
+### Changes
+
+- Enable view managers to listen for JS event attach/detach (asklar@microsoft.com)
+- Fixes case where focus commands may be ignored (erozell@outlook.com)
+- Enabling codesigning via ESRP (jthysell@microsoft.com)
+
+## 0.0.0-canary.270
+
+Wed, 10 Mar 2021 05:10:47 GMT
+
+### Changes
+
+- More doc formatting (asklar@microsoft.com)
+
+## 0.0.0-canary.269
+
+Tue, 09 Mar 2021 22:34:34 GMT
+
+### Changes
+
+- beachball fixes (jthysell@microsoft.com)
+
+## 0.0.0-canary.268
+
+Tue, 09 Mar 2021 21:16:42 GMT
+
+### Changes
+
+- beachball sync (jthysell@microsoft.com)
+- Fix rnw-dependencies.ps1: VS Enterprise, require 18362 sdk, add cppwinrt vsix for rnw devs (asklar@microsoft.com)
+
+## 0.0.0-canary.265
+
+Tue, 09 Mar 2021 18:00:37 GMT
+
+### Changes
+
+- Integrate 6/3 RN nigtly build. (igklemen@microsoft.com)
+- Clarify IJSValueWriter/IJSValueReader docs (asklar@microsoft.com)
+- fix bad merge (asklar@microsoft.com)
+- Disable warning 4103 in MemoryMappedBufferTests.cpp (julio.rocha@microsoft.com)
+- Clarify IJSValueWriter/IJSValueReader docs (asklar@microsoft.com)
+- Integrate 2/20 (igklemen@microsoft.com)
+
+## 0.0.0-canary.264
+
+Mon, 08 Mar 2021 20:49:18 GMT
+
+### Changes
+
+- Avoid re-registering render callbacks when coalescing single element queue (ngerlem@microsoft.com)
+
+## 0.0.0-canary.263
+
+Fri, 05 Mar 2021 16:31:03 GMT
+
+### Changes
+
+- remove stale appium comment (igklemen@microsoft.com)
+- Fix right click warning. (igklemen@microsoft.com)
+- Remove unnecessary exceptions to unblock some partners (asklar@microsoft.com)
+- Coalesce ScrollView Messages (ngerlem@microsoft.com)
+- Remove ChakraExecutor (non-JSI) (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.262
+
+Thu, 04 Mar 2021 05:05:53 GMT
+
+### Patches
+
+- Bump react-native-platform-override to v1.4.13 (dannyvv@microsoft.com)
+
+### Changes
+
+- Some XAML events do not have a sender (e.g. Loaded) (asklar@microsoft.com)
+- Update WinAppDriver version requirement (asklar@microsoft.com)
+- Fixes registration name for TextInput onScroll (erozell@outlook.com)
+- Integrate 2/9 nightly RN build. (igklemen@microsoft.com)
+- Ensure root views are properly unloaded (#7221) (skyle@fb.com)
+- Narrow fix for tintColor and repeat images (erozell@outlook.com)
+- Fix RN runtimeExecutor use of std::thread (asklar@microsoft.com)
+
+## 0.0.0-canary.261
+
+Tue, 02 Mar 2021 05:06:32 GMT
+
+### Changes
+
+- Fix announceForAccessibility (34109996+chiaramooney@users.noreply.github.com)
+
+## 0.0.0-canary.260
+
+Fri, 26 Feb 2021 05:06:35 GMT
+
+### Changes
+
+- Revert "Fix DispatchEvent for events that don't have a sender (#7207)" (asklar@microsoft.com)
+
+## 0.0.0-canary.259
+
+Thu, 25 Feb 2021 05:05:52 GMT
+
+### Changes
+
+- Some XAML events do not have a sender (e.g. Loaded) (asklar@microsoft.com)
+- [Image] add svg data uri support (email not defined)
+
+## 0.0.0-canary.258
+
+Tue, 23 Feb 2021 05:06:42 GMT
+
+### Changes
+
+- Fixes race conditions for ReactImage (erozell@outlook.com)
+- Fix websocket crash when bundler goes away (asklar@microsoft.com)
+
+## 0.0.0-canary.257
+
+Sat, 20 Feb 2021 05:06:12 GMT
+
+### Changes
+
+- Include RuntimeExecutor.h in nuget (30809111+acoates-ms@users.noreply.github.com)
+- [Perf] Make DesktopWindowMessage a struct (asklar@microsoft.com)
+- Drop WebSocketModule integration tests (julio.rocha@microsoft.com)
+
+## 0.0.0-canary.256
+
+Thu, 18 Feb 2021 05:07:11 GMT
+
+### Changes
+
+- Improve Microsoft.ReactNative compilation speed (vmorozov@microsoft.com)
+- Fix DevMenuControl.xbf copy conflict (vmorozov@microsoft.com)
+- Set up mechanism to forward window messages from [WinUI 3] xaml islands. Update AppTheme and DeviceInfo module. (asklar@microsoft.com)
+- Integrate 1/31 Nightly RN Build (ngerlem@microsoft.com)
+- Add IViewManagerCreateWithProperties to allow VMs to change behavior at create time (asklar@microsoft.com)
+- Integrate rnw-dependencies into react-native doctor (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.255
+
+Sun, 14 Feb 2021 05:06:10 GMT
+
+### Changes
+
+- Update WinUI 3 package to Preview 4 (asklar@microsoft.com)
+
+## 0.0.0-canary.254
+
+Fri, 12 Feb 2021 05:19:35 GMT
+
+### Changes
+
+- Fixed typo in template which breaks C# autolinking (jthysell@microsoft.com)
+- Fix all package typos (jthysell@microsoft.com)
+- Fix cursor resetting in TextInput. (igklemen@microsoft.com)
+
+## 0.0.0-canary.253
+
+Thu, 11 Feb 2021 05:08:29 GMT
+
+### Patches
+
+- Bump react-native-platform-override to v1.4.12 (ngerlem@microsoft.com)
+
+### Changes
+
+- Minor doc update (30809111+acoates-ms@users.noreply.github.com)
+- Make modules use the app's buildFlags.props (asklar@microsoft.com)
+- Improve compile time by increasing paralelism (dannyvv@microsoft.com)
+- Rename "BuildFlags.props" to "ExperimentalFeatures.props" (ngerlem@microsoft.com)
+
+## 0.0.0-canary.252
+
+Wed, 10 Feb 2021 05:06:37 GMT
+
+### Changes
+
+- Build apps for either/or WinUI 3 or XAML (asklar@microsoft.com)
+
+## 0.0.0-canary.251
+
+Tue, 09 Feb 2021 05:07:37 GMT
+
+### Changes
+
+- [Fix] ScrollView.ScrollToEnd not working for vertical lists (igklemen@microsoft.com)
+- Bump just-scripts from 1.3.2 to 1.3.3 (dannyvv@microsoft.com)
+- Doxysaurus tool to generate docs for  C++ (vmorozov@microsoft.com)
+
+## 0.0.0-canary.250
+
+Mon, 08 Feb 2021 05:05:41 GMT
+
+### Changes
+
+- Fix Switch.onChange (igklemen@microsoft.com)
+
+## 0.0.0-canary.249
+
+Thu, 04 Feb 2021 05:05:58 GMT
+
+### Changes
+
+- Initialize ETW provider only once (asklar@microsoft.com)
+
+## 0.0.0-canary.248
+
+Wed, 03 Feb 2021 05:05:12 GMT
+
+### Changes
+
+- Fix template for WinUI3 C# App by expanding namespace of argument in AppOnActivated (dannyvv@microsoft.com)
+- AllAnimations only exists on RS5 (asklar@microsoft.com)
+- Fix deep linking activation (vmorozov@microsoft.com)
+
+## 0.0.0-canary.247
+
+Tue, 02 Feb 2021 05:05:37 GMT
+
+### Changes
+
+- Allow custom view managers to be able to trigger our logic to run native layout (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.246
+
+Sat, 30 Jan 2021 05:06:38 GMT
+
+### Changes
+
+- App crashes at startup on RS3 because of RS4+ API usage (asklar@microsoft.com)
+
+## 0.0.0-canary.245
+
+Fri, 29 Jan 2021 05:05:32 GMT
+
+### Changes
+
+- Remove disabling 4018 4055 4146 4242 (asklar@microsoft.com)
+
+## 0.0.0-canary.244
+
+Thu, 28 Jan 2021 05:06:47 GMT
+
+### Patches
+
+- Bump react-native-platform-override to v1.4.10 (dannyvv@microsoft.com)
+- Bump react-native-windows-codegen to v1.1.14 (dannyvv@microsoft.com)
+
+### Changes
+
+- Leverage default config support in Just library and factor out common tasks (dannyvv@microsoft.com)
+
+## 0.0.0-canary.243
+
+Wed, 27 Jan 2021 05:06:36 GMT
+
+### Patches
+
+- Bump react-native-windows-codegen to v1.1.13 (ngerlem@microsoft.com)
+- Bump react-native-platform-override to v1.4.9 (ngerlem@microsoft.com)
+
+### Changes
+
+- Update comments for IJSValueReader and IJSValueWriter (vmorozov@microsoft.com)
+- use lifted DispatcherQueue (asklar@microsoft.com)
+- Show TS Stack Traces on Uncaught CLI Exception (ngerlem@microsoft.com)
+- Remove usage of deprecated API (asklar@microsoft.com)
+
+## 0.0.0-canary.242
+
+Tue, 26 Jan 2021 05:06:39 GMT
+
+### Patches
+
+- Bump react-native-platform-override to v1.4.8 (dannyvv@microsoft.com)
+
+### Changes
+
+- Update @types package versions in package.json from dependabot updates to yarn.lock (dannyvv@microsoft.com)
+- Background/Foreground app state handlers should be registered from the xaml thread (asklar@microsoft.com)
+- Rewrite E2ETest Specs (Removes Python Dependency) (ngerlem@microsoft.com)
+- Integrate 1/21 Nightly RN Build (ngerlem@microsoft.com)
+
+## 0.0.0-canary.241
+
+Sat, 23 Jan 2021 05:08:20 GMT
+
+### Changes
+
+- react-native-windows package should include jest preset/setup files (30809111+acoates-ms@users.noreply.github.com)
+
+## 0.0.0-canary.240
+
+Fri, 22 Jan 2021 05:07:27 GMT
+
+### Changes
+
+- Add new .net native and UWP runtime versions (asklar@microsoft.com)
+
+## 0.0.0-canary.239
+
+Thu, 21 Jan 2021 18:54:54 GMT
+
+### Changes
+
+- Update V8 and Hermes package versions (tudor.mihai@microsoft.com)
 
 ## 0.0.0-canary.238
 
@@ -1617,7 +2335,7 @@ Thu, 07 May 2020 00:05:07 GMT
 - Don't delete nuget.exe if using locally-installed (e.g. chocolatey) (asklar@microsoft.com)
 - Only bundle when not running Intellisense builds (asklar@microsoft.com)
 - Disable CxxFrameHandler4 (ngerlem@microsoft.com)
-- Switch package layout to use `files` in `pacakge.json` rather than `.npmignore` (dannyvv@microsoft.com)
+- Switch package layout to use `files` in `package.json` rather than `.npmignore` (dannyvv@microsoft.com)
 
 ## 0.0.0-master.59
 

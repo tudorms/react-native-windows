@@ -14,11 +14,14 @@ const {
   option,
   argv,
   tscTask,
-  eslintTask,
 } = require('just-scripts');
+
+// Use the shared base configuration
+require('@rnw-scripts/just-task');
+require('@rnw-scripts/just-task/react-native-tasks');
+
 const {execSync} = require('child_process');
 const fs = require('fs');
-const copyRNLibaries = require('./Scripts/copyRNLibraries');
 
 option('production');
 option('clean');
@@ -27,19 +30,17 @@ task(
   'codegen',
   series(cleanTask({paths: ['./codegen']}), () => {
     execSync(
-      'npx react-native-windows-codegen --files Libraries/**/Native*.js --namespace Microsoft::ReactNativeSpecs',
+      'npx --no-install @react-native-windows/codegen --files Libraries/**/*Native*.js --namespace Microsoft::ReactNativeSpecs --libraryName rnwcore',
+    );
+    execSync(
+      'npx --no-install @react-native-windows/codegen --files Libraries/**/*NativeComponent.js --namespace Microsoft::ReactNativeSpecs --libraryName rnwcore',
+    );
+    fs.writeFileSync(
+      'codegen/.clang-format',
+      'DisableFormat: true\nSortIncludes: false',
     );
   }),
 );
-
-task('flow-check', () => {
-  require('child_process').execSync('npx flow check', {stdio: 'inherit'});
-});
-
-task('eslint', eslintTask());
-task('eslint:fix', eslintTask({fix: true}));
-
-task('copyRNLibraries', copyRNLibaries.copyTask(__dirname));
 
 task('copyReadmeAndLicenseFromRoot', () => {
   fs.copyFileSync(
@@ -52,19 +53,7 @@ task('copyReadmeAndLicenseFromRoot', () => {
   );
 });
 
-task(
-  'compileTsPlatformOverrides',
-  tscTask({
-    pretty: true,
-    ...(argv().production && {
-      inlineSources: true,
-    }),
-    target: 'es5',
-    module: 'commonjs',
-  }),
-);
-
-task('cleanRnLibraries', copyRNLibaries.cleanTask(__dirname));
+task('compileTsPlatformOverrides', tscTask());
 
 task(
   'build',
@@ -77,7 +66,6 @@ task(
   ),
 );
 
-task('clean', series('cleanRnLibraries'));
+task('clean', series('cleanRNLibraries'));
 
 task('lint', series('eslint', 'flow-check'));
-task('lint:fix', series('eslint:fix'));

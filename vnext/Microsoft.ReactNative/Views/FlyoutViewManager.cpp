@@ -86,7 +86,7 @@ class FlyoutShadowNode : public ShadowNodeBase {
   virtual ~FlyoutShadowNode();
 
   void AddView(ShadowNode &child, int64_t index) override;
-  void createView() override;
+  void createView(const winrt::Microsoft::ReactNative::JSValueObject &) override;
   static void OnFlyoutClosed(const Mso::React::IReactContext &context, int64_t tag, bool newValue);
   void onDropViewInstance() override;
   void removeAllChildren() override;
@@ -149,8 +149,8 @@ void FlyoutShadowNode::AddView(ShadowNode &child, int64_t /*index*/) {
   }
 }
 
-void FlyoutShadowNode::createView() {
-  Super::createView();
+void FlyoutShadowNode::createView(const winrt::Microsoft::ReactNative::JSValueObject &props) {
+  Super::createView(props);
 
   m_flyout = winrt::Flyout();
   m_isFlyoutShowOptionsSupported = !!(winrt::Flyout().try_as<winrt::IFlyoutBase5>());
@@ -158,7 +158,8 @@ void FlyoutShadowNode::createView() {
   if (m_isFlyoutShowOptionsSupported)
     m_showOptions = winrt::FlyoutShowOptions();
 
-  m_touchEventHanadler = std::make_unique<TouchEventHandler>(GetViewManager()->GetReactContext());
+  m_touchEventHanadler = std::make_unique<TouchEventHandler>(
+      GetViewManager()->GetReactContext(), false /*Flyout not supported in fabric currently*/);
   m_previewKeyboardEventHandlerOnRoot =
       std::make_unique<PreviewKeyboardEventHandlerOnRoot>(GetViewManager()->GetReactContext());
 
@@ -202,7 +203,7 @@ void FlyoutShadowNode::createView() {
         // of open popups/flyouts. We apply this translation on open of the
         // flyout. (Translation is only supported on RS5+, eg. IUIElement9)
         if (auto uiElement9 = GetView().try_as<xaml::IUIElement9>()) {
-          auto numOpenPopups = react::uwp::CountOpenPopups();
+          auto numOpenPopups = CountOpenPopups();
           if (numOpenPopups > 0) {
             winrt::Numerics::float3 translation{0, 0, (float)16 * numOpenPopups};
             flyoutPresenter.Translation(translation);
@@ -434,8 +435,8 @@ const wchar_t *FlyoutViewManager::GetName() const {
   return L"RCTFlyout";
 }
 
-XamlView FlyoutViewManager::CreateViewCore(int64_t /*tag*/) {
-  return winrt::make<winrt::react::uwp::implementation::ViewPanel>().as<XamlView>();
+XamlView FlyoutViewManager::CreateViewCore(int64_t /*tag*/, const winrt::Microsoft::ReactNative::JSValueObject &) {
+  return winrt::make<winrt::Microsoft::ReactNative::implementation::ViewPanel>().as<XamlView>();
 }
 
 ShadowNode *FlyoutViewManager::createShadow() const {

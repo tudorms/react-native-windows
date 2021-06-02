@@ -13,8 +13,6 @@ import {
 import {DatePicker, Picker} from 'react-native-windows';
 import * as React from 'react'
 import { useState } from 'react';
-import { SHOWBORDER_ON_CONTROLSTYLE, TREE_DUMP_RESULT } from './Consts';
-import { TreeDumpControl } from './TreeDumpControl';
 
 const styles = StyleSheet.create({
   container: {
@@ -45,11 +43,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     borderRadius: 10.0,
   },
-  treeDumpControl: {
-    height: 150,
-    width: 500,
-    margin: 10,
-  },
 });
 
 export function ControlStyleTestPage() {
@@ -62,7 +55,7 @@ export function ControlStyleTestPage() {
 
   return (
     <View>
-      <View testID={'ControlStyleView'}>
+      <View testID="control-style-switch-view">
         {
           <Switch
             style={showRoundBorder ? styles.roundBorder : styles.regularBorder}
@@ -94,18 +87,7 @@ export function ControlStyleTestPage() {
       <Button
         title={showRoundBorder ? 'Hide Round Border' : 'Show Round Border'}
         onPress={onPressShowRoundBorder}
-        testID={SHOWBORDER_ON_CONTROLSTYLE}
-      />
-
-      <TreeDumpControl
-        style={styles.treeDumpControl}
-        dumpID={
-          showRoundBorder
-            ? 'ControlStyleRoundBorder'
-            : 'ControlStyleRegularBorder'
-        }
-        uiaID={'ControlStyleView'}
-        testID={TREE_DUMP_RESULT}
+        testID="show-border-toggle"
       />
     </View>
   );

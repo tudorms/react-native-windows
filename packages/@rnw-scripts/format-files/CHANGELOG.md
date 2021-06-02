@@ -1,8 +1,64 @@
 # Change Log - @rnw-scripts/format-files
 
-This log was last generated on Fri, 15 Jan 2021 05:07:01 GMT and should not be manually modified.
+This log was last generated on Fri, 21 May 2021 05:17:18 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.0.21
+
+Fri, 21 May 2021 05:17:18 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.1.1 (ngerlem@microsoft.com)
+
+## 1.0.20
+
+Thu, 13 May 2021 05:11:48 GMT
+
+### Patches
+
+- Dont format files in codegen (30809111+acoates-ms@users.noreply.github.com)
+
+## 1.0.19
+
+Thu, 11 Feb 2021 05:08:29 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.1.0 (ngerlem@microsoft.com)
+
+## 1.0.18
+
+Tue, 09 Feb 2021 05:07:37 GMT
+
+### Patches
+
+- Bump just-scripts from 1.3.2 to 1.3.3 (dannyvv@microsoft.com)
+
+## 1.0.17
+
+Thu, 28 Jan 2021 05:06:47 GMT
+
+### Patches
+
+- Leverage default config support in Just library and factor out common tasks (dannyvv@microsoft.com)
+
+## 1.0.16
+
+Wed, 27 Jan 2021 05:06:36 GMT
+
+### Patches
+
+- Show TS Stack Traces on Uncaught CLI Exception (ngerlem@microsoft.com)
+
+## 1.0.15
+
+Tue, 26 Jan 2021 05:06:39 GMT
+
+### Patches
+
+- Update @types package versions in package.json from dependabot updates to yarn.lock (dannyvv@microsoft.com)
 
 ## 0.0.14
 

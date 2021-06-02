@@ -5,16 +5,16 @@
  * @format
  */
 
-import * as yargs from 'yargs';
-import * as fs from 'fs';
-import * as semver from 'semver';
+import yargs from 'yargs';
+import fs from 'fs';
+import semver from 'semver';
 import {exec, execSync} from 'child_process';
-import * as validUrl from 'valid-url';
-import * as prompts from 'prompts';
-import * as findUp from 'find-up';
-import * as chalk from 'chalk';
+import validUrl from 'valid-url';
+import prompts from 'prompts';
+import findUp from 'find-up';
+import chalk from 'chalk';
 // @ts-ignore
-import * as Registry from 'npm-registry';
+import Registry from 'npm-registry';
 
 import {
   Telemetry,
@@ -77,7 +77,7 @@ const argv = yargs
     },
     projectType: {
       type: 'string',
-      describe: 'The type of project to initialize.',
+      describe: 'The type of project to initialize (supported on 0.64+)',
       choices: ['app', 'lib'],
       default: 'app',
     },
@@ -432,14 +432,6 @@ function isProjectUsingYarn(cwd: string): boolean {
         'IncompatibleOptions',
         "Error: Incompatible options specified. Options '--useHermes' and '--experimentalNuGetDependency' are incompatible",
         {detail: 'useHermes and experimentalNuGetDependency'},
-      );
-    }
-
-    if (argv.useHermes && argv.language === 'cs') {
-      throw new CodedError(
-        'IncompatibleOptions',
-        "Error: '--useHermes' is not yet compatible with C# projects",
-        {detail: 'useHermes and C#'},
       );
     }
 

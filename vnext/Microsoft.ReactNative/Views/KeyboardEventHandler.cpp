@@ -21,8 +21,6 @@ static constexpr auto KEY = "key";
 static constexpr auto TARGET = "target";
 static constexpr auto CODE = "code";
 
-using namespace react::uwp;
-
 template <>
 struct json_type_traits<Microsoft::ReactNative::HandledKeyboardEvent> {
   static Microsoft::ReactNative::HandledKeyboardEvent parseJson(const winrt::Microsoft::ReactNative::JSValue &json) {
@@ -43,7 +41,8 @@ struct json_type_traits<Microsoft::ReactNative::HandledKeyboardEvent> {
       else if (propertyName == CODE)
         event.code = propertyValue.AsString();
       else if (propertyName == EVENT_PHASE)
-        event.handledEventPhase = asEnum<Microsoft::ReactNative::HandledEventPhase>(propertyValue);
+        event.handledEventPhase =
+            Microsoft::ReactNative::asEnum<Microsoft::ReactNative::HandledEventPhase>(propertyValue);
     }
 
     return event;
@@ -177,15 +176,15 @@ void HandledKeyboardEventHandler::KeyboardEventHandledHandler(
 
   bool shouldMarkHandled = false;
   if (phase == KeyboardEventPhase::PreviewKeyDown || phase == KeyboardEventPhase::KeyDown)
-    shouldMarkHandled = ShouldMarkKeyboardHandled(m_handledKeyDownKeyboardEvents, event);
+    shouldMarkHandled = KeyboardHelper::ShouldMarkKeyboardHandled(m_handledKeyDownKeyboardEvents, event);
   else
-    shouldMarkHandled = ShouldMarkKeyboardHandled(m_handledKeyUpKeyboardEvents, event);
+    shouldMarkHandled = KeyboardHelper::ShouldMarkKeyboardHandled(m_handledKeyUpKeyboardEvents, event);
 
   if (shouldMarkHandled)
     args.Handled(true);
 }
 
-bool HandledKeyboardEventHandler::ShouldMarkKeyboardHandled(
+/* static */ bool KeyboardHelper::ShouldMarkKeyboardHandled(
     std::vector<HandledKeyboardEvent> const &handledEvents,
     HandledKeyboardEvent currentEvent) {
   for (auto const &event : handledEvents) {
@@ -369,7 +368,6 @@ static const std::vector<std::pair<int, std::string>> g_virtualKeyToCode{
     {to_underlying(winrt::Windows::System::VirtualKey::Back), "Backspace"},
     {219, "BracketLeft"},
     {221, "BracketRight"},
-    {192, "BracketLeft"},
     {188, "Comma"},
     {187, "Equal"},
     //{to_underlying(winrt::Windows::System::None), "IntlBackslash"},

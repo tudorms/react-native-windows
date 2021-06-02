@@ -23,7 +23,6 @@ jobs:
           (FullyQualifiedName!=RNTesterIntegrationTests::AsyncStorage)&
           (FullyQualifiedName!=RNTesterIntegrationTests::IntegrationTestHarness)&
           (FullyQualifiedName!=RNTesterIntegrationTests::WebSocket)&
-          (FullyQualifiedName!~WebSocketModule_)&
           (FullyQualifiedName!=WebSocketResourcePerformanceTest::ProcessThreadsPerResource)
 
       #6799 -
@@ -38,20 +37,10 @@ jobs:
 
     strategy:
       matrix:
-        # Start Continuous only
         ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
-          ArmDebug:
+          Arm64Debug:
             BuildConfiguration: Debug
-            BuildPlatform: ARM
-          ArmRelease:
-            BuildConfiguration: Release
-            BuildPlatform: ARM
-        # End Continuous only
-        Arm64Debug:
-          BuildConfiguration: Debug
-          BuildPlatform: ARM64
-        # Start Continuous only
-        ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
+            BuildPlatform: ARM64
           Arm64Release:
             BuildConfiguration: Release
             BuildPlatform: ARM64
@@ -71,8 +60,7 @@ jobs:
             BuildConfiguration: Release
             BuildPlatform: x86
         # End Continuous only
-    pool:
-      vmImage: $(VmImage)
+    pool: $(AgentPool.Medium)
     timeoutInMinutes: 60 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
 
@@ -80,6 +68,8 @@ jobs:
       - checkout: self
         clean: false
         submodules: false
+
+      - template: ../templates/apply-published-version-vars.yml
 
       - powershell: |
           $newValue = '(FullyQualifiedName!~RNTesterIntegrationTests::)&' + "$(Desktop.IntegrationTests.Filter)"
@@ -97,7 +87,7 @@ jobs:
         displayName: Build react-native-win32 RNTester bundle
         inputs:
           script: yarn bundle
-          workingDirectory: packages/react-native-win32
+          workingDirectory: packages/@office-iss/react-native-win32
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Debug'), eq(variables['BuildPlatform'], 'x64'))
 
       - powershell: |
@@ -167,8 +157,4 @@ jobs:
             React.Windows.Desktop.DLL\**
             React.Windows.Desktop.Test.DLL\**
 
-      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-        displayName: 'Component Governance Detection'
-        inputs:
-          alertWarningLevel: Medium
-          scanType: 'Register'
+      - template: ../templates/component-governance.yml

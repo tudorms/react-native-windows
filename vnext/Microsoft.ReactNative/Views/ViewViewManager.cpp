@@ -39,26 +39,24 @@ class ViewShadowNode : public ShadowNodeBase {
  public:
   ViewShadowNode() = default;
 
-  void createView() override {
-    Super::createView();
+  void createView(const winrt::Microsoft::ReactNative::JSValueObject &props) override {
+    Super::createView(props);
 
     auto panel = GetViewPanel();
 
-    react::uwp::DynamicAutomationProperties::SetAccessibilityInvokeEventHandler(panel, [=]() {
+    DynamicAutomationProperties::SetAccessibilityInvokeEventHandler(panel, [=]() {
       if (OnClick())
         DispatchEvent("topClick", std::move(folly::dynamic::object("target", m_tag)));
       else
         DispatchEvent("topAccessibilityTap", std::move(folly::dynamic::object("target", m_tag)));
     });
 
-    react::uwp::DynamicAutomationProperties::SetAccessibilityActionEventHandler(
-        panel, [=](winrt::react::uwp::AccessibilityAction const &action) {
+    DynamicAutomationProperties::SetAccessibilityActionEventHandler(
+        panel, [=](winrt::Microsoft::ReactNative::AccessibilityAction const &action) {
           folly::dynamic eventData = folly::dynamic::object("target", m_tag);
 
           eventData.insert(
-              "actionName",
-              action.Label.empty() ? react::uwp::HstringToDynamic(action.Name)
-                                   : react::uwp::HstringToDynamic(action.Label));
+              "actionName", action.Label.empty() ? HstringToDynamic(action.Name) : HstringToDynamic(action.Label));
 
           DispatchEvent("topAccessibilityAction", std::move(eventData));
         });
@@ -157,14 +155,14 @@ class ViewShadowNode : public ShadowNodeBase {
     XamlView current = m_view;
 
     // TODO NOW: Why do we do this? Removal of children doesn't seem to imply we
-    // tear down the infrastr
+    // tear down the infrastructure
     if (IsControl()) {
       if (auto control = m_view.try_as<xaml::Controls::ContentControl>()) {
         current = control.Content().as<XamlView>();
         control.Content(nullptr);
       } else {
         std::string name = Microsoft::Common::Unicode::Utf16ToUtf8(winrt::get_class_name(current).c_str());
-        cdebug << "Tearing down, IsControl=true but the control is not a ContentControl, it's a " << name << std::endl;
+        cdebug << "Tearing down, IsControl=true but the control is not a ContentControl, it's a " << name << "\n";
       }
     }
 
@@ -197,7 +195,7 @@ class ViewShadowNode : public ShadowNodeBase {
     static_cast<FrameworkElementViewManager *>(GetViewManager())->RefreshTransformMatrix(this);
   }
 
-  winrt::react::uwp::ViewPanel GetViewPanel() {
+  winrt::Microsoft::ReactNative::ViewPanel GetViewPanel() {
     XamlView current = m_view;
 
     if (IsControl()) {
@@ -212,18 +210,18 @@ class ViewShadowNode : public ShadowNodeBase {
       }
     }
 
-    auto panel = current.try_as<winrt::react::uwp::ViewPanel>();
+    auto panel = current.try_as<winrt::Microsoft::ReactNative::ViewPanel>();
     assert(panel != nullptr);
 
     return panel;
   }
 
-  winrt::react::uwp::ViewControl GetControl() {
-    return IsControl() ? m_view.as<winrt::react::uwp::ViewControl>() : nullptr;
+  winrt::Microsoft::ReactNative::ViewControl GetControl() {
+    return IsControl() ? m_view.as<winrt::Microsoft::ReactNative::ViewControl>() : nullptr;
   }
 
   XamlView CreateViewControl() {
-    auto contentControl = winrt::make<winrt::react::uwp::implementation::ViewControl>();
+    auto contentControl = winrt::make<winrt::Microsoft::ReactNative::implementation::ViewControl>();
 
     m_contentControlGotFocusRevoker = contentControl.GotFocus(winrt::auto_revoke, [=](auto &&, auto &&args) {
       if (args.OriginalSource().try_as<xaml::UIElement>() == contentControl.as<xaml::UIElement>()) {
@@ -263,19 +261,19 @@ class ViewShadowNode : public ShadowNodeBase {
 // specialize
 // PropertyUtils' TryUpdateBackgroundBrush to use ViewBackground.
 // Issue #2172: Additionally, we need to use
-// winrt::react::uwp::ViewPanel::implementation::ViewBackgroundProperty
+// winrt::Microsoft::ReactNative::ViewPanel::implementation::ViewBackgroundProperty
 // rather than the proper projected type, because of how we're using cppwinrt.
 
 template <>
 bool TryUpdateBackgroundBrush(
-    const winrt::react::uwp::ViewPanel &element,
+    const winrt::Microsoft::ReactNative::ViewPanel &element,
     const std::string &propertyName,
     const winrt::Microsoft::ReactNative::JSValue &propertyValue) {
   if (propertyName == "backgroundColor") {
-    if (react::uwp::IsValidColorValue(propertyValue))
-      element.ViewBackground(react::uwp::BrushFrom(propertyValue));
+    if (IsValidColorValue(propertyValue))
+      element.ViewBackground(BrushFrom(propertyValue));
     else if (propertyValue.IsNull())
-      element.ClearValue(react::uwp::ViewPanel::ViewBackgroundProperty());
+      element.ClearValue(ViewPanel::ViewBackgroundProperty());
 
     return true;
   }
@@ -283,26 +281,26 @@ bool TryUpdateBackgroundBrush(
   return false;
 }
 
-// Issue #2172: Calling winrt::react::uwp::ViewPanel::BorderBrushProperty fails
+// Issue #2172: Calling winrt::Microsoft::ReactNative::ViewPanel::BorderBrushProperty fails
 // to call
-// down into winrt::react::uwp::implementation::ViewPanel::BorderBrushProperty
+// down into winrt::Microsoft::ReactNative::implementation::ViewPanel::BorderBrushProperty
 // because of how we're using cppwinrt. So we specialize PropertyUtils'
 // TryUpdateBorderProperties
-// to use winrt::react::uwp::ViewPanel::implementation::BorderBrushProperty
+// to use winrt::Microsoft::ReactNative::ViewPanel::implementation::BorderBrushProperty
 
 template <>
 bool TryUpdateBorderProperties(
     ShadowNodeBase *node,
-    const winrt::react::uwp::ViewPanel &element,
+    const winrt::Microsoft::ReactNative::ViewPanel &element,
     const std::string &propertyName,
     const winrt::Microsoft::ReactNative::JSValue &propertyValue) {
   bool isBorderProperty = true;
 
   if (propertyName == "borderColor") {
-    if (react::uwp::IsValidColorValue(propertyValue))
-      element.BorderBrush(react::uwp::BrushFrom(propertyValue));
+    if (IsValidColorValue(propertyValue))
+      element.BorderBrush(BrushFrom(propertyValue));
     else if (propertyValue.IsNull())
-      element.ClearValue(react::uwp::ViewPanel::BorderBrushProperty());
+      element.ClearValue(ViewPanel::BorderBrushProperty());
   } else if (propertyName == "borderLeftWidth") {
     if (propertyValue.Type() == winrt::Microsoft::ReactNative::JSValueType::Double ||
         propertyValue.Type() == winrt::Microsoft::ReactNative::JSValueType::Int64)
@@ -332,7 +330,7 @@ bool TryUpdateBorderProperties(
         propertyValue.Type() == winrt::Microsoft::ReactNative::JSValueType::Int64)
       SetBorderThickness(node, element, ShadowEdges::AllEdges, propertyValue.AsDouble());
     else if (propertyValue.IsNull())
-      element.ClearValue(react::uwp::ViewPanel::BorderThicknessProperty());
+      element.ClearValue(ViewPanel::BorderThicknessProperty());
   } else {
     isBorderProperty = false;
   }
@@ -367,8 +365,8 @@ ShadowNode *ViewViewManager::createShadow() const {
   return new ViewShadowNode();
 }
 
-XamlView ViewViewManager::CreateViewCore(int64_t /*tag*/) {
-  auto panel = winrt::make<winrt::react::uwp::implementation::ViewPanel>();
+XamlView ViewViewManager::CreateViewCore(int64_t /*tag*/, const winrt::Microsoft::ReactNative::JSValueObject &) {
+  auto panel = winrt::make<winrt::Microsoft::ReactNative::implementation::ViewPanel>();
   panel.VerticalAlignment(xaml::VerticalAlignment::Stretch);
   panel.HorizontalAlignment(xaml::HorizontalAlignment::Stretch);
 
@@ -456,7 +454,7 @@ void ViewViewManager::OnPropertiesUpdated(ShadowNodeBase *node) {
   if (auto view = viewShadowNode->GetView().try_as<xaml::UIElement>()) {
     // If we have DynamicAutomationProperties, we need a ViewControl with a
     // DynamicAutomationPeer
-    shouldBeControl = shouldBeControl || react::uwp::HasDynamicAutomationProperties(view);
+    shouldBeControl = shouldBeControl || HasDynamicAutomationProperties(view);
   }
 
   panel.FinalizeProperties();
@@ -466,7 +464,7 @@ void ViewViewManager::OnPropertiesUpdated(ShadowNodeBase *node) {
 
 void ViewViewManager::TryUpdateView(
     ViewShadowNode *pViewShadowNode,
-    winrt::react::uwp::ViewPanel &pPanel,
+    winrt::Microsoft::ReactNative::ViewPanel &pPanel,
     bool useControl) {
   bool isControl = pViewShadowNode->IsControl();
   bool hadOuterBorder = pViewShadowNode->HasOuterBorder();

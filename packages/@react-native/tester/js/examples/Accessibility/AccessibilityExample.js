@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 'use strict';
@@ -12,17 +13,18 @@
 const React = require('react');
 const {
   AccessibilityInfo,
+  TextInput,
   Button,
   Image,
   Text,
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  findNodeHandle,
   Alert,
   StyleSheet,
   Platform,
 } = require('react-native');
+import type {EventSubscription} from 'react-native/Libraries/vendor/emitter/EventEmitter';
 
 const RNTesterBlock = require('../../components/RNTesterBlock');
 
@@ -32,16 +34,36 @@ const mixedCheckboxImageSource = require('./mixed.png');
 const {createRef} = require('react');
 
 const styles = StyleSheet.create({
+  default: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#0f0f0f',
+    flex: 1,
+    fontSize: 13,
+    padding: 4,
+  },
+  touchable: {
+    backgroundColor: 'blue',
+    borderColor: 'red',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    borderStyle: 'solid',
+  },
   image: {
     width: 20,
     height: 20,
     resizeMode: 'contain',
     marginRight: 10,
   },
+  containerAlignCenter: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
 });
 
-class AccessibilityExample extends React.Component {
-  render() {
+class AccessibilityExample extends React.Component<{}> {
+  render(): React.Node {
     return (
       <View>
         <RNTesterBlock title="TextView without label">
@@ -81,7 +103,7 @@ class AccessibilityExample extends React.Component {
         </RNTesterBlock>
 
         {/* Android screen readers will say the accessibility hint instead of the text
-        since the view doesn't have a label. */}
+           since the view doesn't have a label. */}
         <RNTesterBlock title="Accessible view with TextViews with hint">
           <View accessibilityHint="Accessibility hint." accessible={true}>
             <Text style={{color: 'green'}}>This is text one.</Text>
@@ -158,7 +180,12 @@ class AccessibilityExample extends React.Component {
   }
 }
 
-class CheckboxExample extends React.Component {
+class CheckboxExample extends React.Component<
+  {},
+  {
+    checkboxState: boolean | 'mixed',
+  },
+> {
   state = {
     checkboxState: true,
   };
@@ -192,7 +219,12 @@ class CheckboxExample extends React.Component {
   }
 }
 
-class SwitchExample extends React.Component {
+class SwitchExample extends React.Component<
+  {},
+  {
+    switchState: boolean,
+  },
+> {
   state = {
     switchState: true,
   };
@@ -219,49 +251,74 @@ class SwitchExample extends React.Component {
   }
 }
 
-class SelectionExample extends React.Component {
-  constructor(props) {
+class SelectionExample extends React.Component<
+  {},
+  {
+    isSelected: boolean,
+    isEnabled: boolean,
+  },
+> {
+  constructor(props: {}) {
     super(props);
-    this.selectableElement = React.createRef();
+    this.selectableElement = createRef();
   }
+  selectableElement: {
+    current: React.ElementRef<typeof TouchableOpacity> | null,
+  };
 
   state = {
     isSelected: true,
     isEnabled: false,
   };
 
-  render() {
+  render(): React.Node {
+    const {isSelected, isEnabled} = this.state;
     let accessibilityHint = 'click me to select';
-    if (this.state.isSelected) {
+    if (isSelected) {
       accessibilityHint = 'click me to unselect';
     }
-    if (!this.state.isEnabled) {
+    if (!isEnabled) {
       accessibilityHint = 'use the button on the right to enable selection';
     }
-    let buttonTitle = this.state.isEnabled
-      ? 'Disable selection'
-      : 'Enable selection';
-
+    let buttonTitle = isEnabled ? 'Disable selection' : 'Enable selection';
+    const touchableHint = ` (touching the TouchableOpacity will ${
+      isSelected ? 'disable' : 'enable'
+    } accessibilityState.selected)`;
     return (
-      <View style={{flex: 1, flexDirection: 'row'}}>
+      <View style={styles.containerAlignCenter}>
         <TouchableOpacity
           ref={this.selectableElement}
           accessible={true}
           onPress={() => {
-            if (this.state.isEnabled) {
+            if (isEnabled) {
               this.setState({
-                isSelected: !this.state.isSelected,
+                isSelected: !isSelected,
               });
+            } else {
+              console.warn('selection is disabled, please enable selection.');
             }
           }}
           accessibilityLabel="element 19"
           accessibilityState={{
-            selected: this.state.isSelected,
-            disabled: !this.state.isEnabled,
+            selected: isSelected,
+            disabled: !isEnabled,
           }}
+          style={styles.touchable}
           accessibilityHint={accessibilityHint}>
-          <Text>Selectable element example</Text>
+          <Text style={{color: 'white'}}>
+            {`Selectable TouchableOpacity Example ${touchableHint}`}
+          </Text>
         </TouchableOpacity>
+        <TextInput
+          accessibilityLabel="element 20"
+          accessibilityState={{
+            selected: isSelected,
+          }}
+          multiline={true}
+          placeholder={`TextInput Example - ${
+            isSelected ? 'enabled' : 'disabled'
+          } selection`}
+        />
         <Button
           onPress={() => {
             this.setState({
@@ -275,7 +332,12 @@ class SelectionExample extends React.Component {
   }
 }
 
-class ExpandableElementExample extends React.Component {
+class ExpandableElementExample extends React.Component<
+  {},
+  {
+    expandState: boolean,
+  },
+> {
   state = {
     expandState: false,
   };
@@ -301,7 +363,14 @@ class ExpandableElementExample extends React.Component {
   }
 }
 
-class NestedCheckBox extends React.Component {
+class NestedCheckBox extends React.Component<
+  {},
+  {
+    checkbox1: boolean | 'mixed',
+    checkbox2: boolean | 'mixed',
+    checkbox3: boolean | 'mixed',
+  },
+> {
   state = {
     checkbox1: false,
     checkbox2: false,
@@ -410,7 +479,7 @@ class NestedCheckBox extends React.Component {
 }
 
 class AccessibilityRoleAndStateExample extends React.Component<{}> {
-  render() {
+  render(): React.Node {
     return (
       <View>
         <View
@@ -515,8 +584,8 @@ class AccessibilityRoleAndStateExample extends React.Component<{}> {
   }
 }
 
-class AccessibilityActionsExample extends React.Component {
-  render() {
+class AccessibilityActionsExample extends React.Component<{}> {
+  render(): React.Node {
     return (
       <View>
         <RNTesterBlock title="Non-touchable with activate action">
@@ -611,13 +680,17 @@ class AccessibilityActionsExample extends React.Component {
   }
 }
 
-class FakeSliderExample extends React.Component {
-  state = {
+type FakeSliderExampleState = {
+  current: number,
+  textualValue: 'center' | 'left' | 'right',
+};
+class FakeSliderExample extends React.Component<{}, FakeSliderExampleState> {
+  state: FakeSliderExampleState = {
     current: 50,
     textualValue: 'center',
   };
 
-  increment = () => {
+  increment: () => void = () => {
     let newValue = this.state.current + 2;
     if (newValue > 100) {
       newValue = 100;
@@ -627,7 +700,7 @@ class FakeSliderExample extends React.Component {
     });
   };
 
-  decrement = () => {
+  decrement: () => void = () => {
     let newValue = this.state.current - 2;
     if (newValue < 0) {
       newValue = 0;
@@ -637,7 +710,7 @@ class FakeSliderExample extends React.Component {
     });
   };
 
-  render() {
+  render(): React.Node {
     return (
       <View>
         <View
@@ -699,7 +772,7 @@ class AnnounceForAccessibility extends React.Component<{}> {
   _handleOnPress = () =>
     AccessibilityInfo.announceForAccessibility('Announcement Test');
 
-  render() {
+  render(): React.Node {
     return (
       <View>
         <Button
@@ -712,27 +785,21 @@ class AnnounceForAccessibility extends React.Component<{}> {
 }
 
 class SetAccessibilityFocusExample extends React.Component<{}> {
-  state = {
-    reactTag: null,
-  };
-
-  render() {
-    const myRef = createRef();
+  render(): React.Node {
+    const myRef: {current: React.ElementRef<any> | null} = createRef();
 
     const onClose = () => {
       if (myRef && myRef.current) {
-        const reactTag = findNodeHandle(myRef.current);
-        this.setState({reactTag});
-        AccessibilityInfo.setAccessibilityFocus(reactTag);
+        AccessibilityInfo.sendAccessibilityEvent_unstable(
+          myRef.current,
+          'focus',
+        );
       }
     };
 
     return (
       <View>
-        <Text>
-          SetAccessibilityFocus on ReactTag:{' '}
-          {this.state.reactTag == null ? 'Null' : this.state.reactTag}
-        </Text>
+        <Text>SetAccessibilityFocus on native element</Text>
         <Button
           ref={myRef}
           title={'Click'}
@@ -751,7 +818,7 @@ class SetAccessibilityFocusExample extends React.Component<{}> {
 }
 
 class EnabledExamples extends React.Component<{}> {
-  render() {
+  render(): React.Node {
     return (
       <View>
         {Platform.OS === 'ios' ? (
@@ -801,13 +868,28 @@ class EnabledExamples extends React.Component<{}> {
   }
 }
 
-class EnabledExample extends React.Component<{}> {
+class EnabledExample extends React.Component<
+  {
+    eventListener:
+      | 'reduceMotionChanged'
+      | 'boldTextChanged'
+      | 'grayscaleChanged'
+      | 'invertColorsChanged'
+      | 'reduceTransparencyChanged'
+      | 'reduceMotionChanged'
+      | 'screenReaderChanged',
+    test: string,
+  },
+  {
+    isEnabled: boolean,
+  },
+> {
   state = {
     isEnabled: false,
   };
-
+  _subscription: EventSubscription;
   componentDidMount() {
-    AccessibilityInfo.addEventListener(
+    this._subscription = AccessibilityInfo.addEventListener(
       this.props.eventListener,
       this._handleToggled,
     );
@@ -823,21 +905,18 @@ class EnabledExample extends React.Component<{}> {
   }
 
   componentWillUnmount() {
-    AccessibilityInfo.removeEventListener(
-      this.props.eventListener,
-      this._handleToggled,
-    );
+    this._subscription?.remove();
   }
 
   _handleToggled = isEnabled => {
     if (!this.state.isEnabled) {
-      this.setState({isEnabled});
+      this.setState({isEnabled: true});
     } else {
       this.setState({isEnabled: false});
     }
   };
 
-  render() {
+  render(): React.Node {
     return (
       <View>
         <Text>
@@ -865,7 +944,7 @@ exports.examples = [
   },
   {
     title: 'New accessibility roles and states',
-    render(): React.Element<typeof AccessibilityRoleAndStateExamples> {
+    render(): React.Element<typeof AccessibilityRoleAndStateExample> {
       return <AccessibilityRoleAndStateExample />;
     },
   },

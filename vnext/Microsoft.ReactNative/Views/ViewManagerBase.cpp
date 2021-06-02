@@ -165,7 +165,7 @@ void ViewManagerBase::GetExportedCustomBubblingEventTypeConstants(
     writer.WritePropertyName(L"phasedRegistrationNames");
     writer.WriteObjectBegin();
     React::WriteProperty(writer, L"captured", bubbleName + L"Capture");
-    React::WriteProperty(writer, L"capbubbledtured", std::move(bubbleName));
+    React::WriteProperty(writer, L"bubbled", std::move(bubbleName));
     writer.WriteObjectEnd();
     writer.WriteObjectEnd();
   }
@@ -191,8 +191,8 @@ void ViewManagerBase::GetExportedCustomDirectEventTypeConstants(
   }
 }
 
-XamlView ViewManagerBase::CreateView(int64_t tag) {
-  XamlView view = CreateViewCore(tag);
+XamlView ViewManagerBase::CreateView(int64_t tag, const winrt::Microsoft::ReactNative::JSValueObject &props) {
+  XamlView view = CreateViewCore(tag, props);
 
   OnViewCreated(view);
   // Set the tag if the element type supports it
@@ -276,19 +276,17 @@ void ViewManagerBase::DispatchCommand(
 }
 
 static const winrt::Microsoft::ReactNative::ReactPropertyId<
-    winrt::Microsoft::ReactNative::ReactNonAbiValue<std::shared_ptr<react::uwp::ExpressionAnimationStore>>>
+    winrt::Microsoft::ReactNative::ReactNonAbiValue<std::shared_ptr<ExpressionAnimationStore>>>
     &ExpressionAnimationStorePropertyId() noexcept {
   static const winrt::Microsoft::ReactNative::ReactPropertyId<
-      winrt::Microsoft::ReactNative::ReactNonAbiValue<std::shared_ptr<react::uwp::ExpressionAnimationStore>>>
+      winrt::Microsoft::ReactNative::ReactNonAbiValue<std::shared_ptr<ExpressionAnimationStore>>>
       prop{L"ReactNative.ViewManagerBase", L"ExpressionAnimationStore"};
   return prop;
 }
 
-std::shared_ptr<react::uwp::ExpressionAnimationStore> ViewManagerBase::GetExpressionAnimationStore() noexcept {
+std::shared_ptr<ExpressionAnimationStore> ViewManagerBase::GetExpressionAnimationStore() noexcept {
   return winrt::Microsoft::ReactNative::ReactPropertyBag(GetReactContext().Properties())
-      .GetOrCreate(
-          ExpressionAnimationStorePropertyId(),
-          []() { return std::make_shared<react::uwp::ExpressionAnimationStore>(); })
+      .GetOrCreate(ExpressionAnimationStorePropertyId(), []() { return std::make_shared<ExpressionAnimationStore>(); })
       .Value();
 }
 
@@ -305,7 +303,7 @@ void ViewManagerBase::NotifyUnimplementedProperty(
     TestHook::NotifyUnimplementedProperty(
         Microsoft::Common::Unicode::Utf16ToUtf8(viewManagerName), className, propertyName, value);
   } else {
-    cdebug << "[NonIInspectable] viewManagerName = " << viewManagerName << std::endl;
+    cdebug << "[NonIInspectable] viewManagerName = " << viewManagerName << "\n";
   }
 #endif // DEBUG
 }
@@ -317,6 +315,17 @@ void ViewManagerBase::SetLayoutProps(
     float top,
     float width,
     float height) {
+  if (auto uiManager = GetNativeUIManager(GetReactContext()).lock()) {
+    auto parent = nodeToUpdate.GetParent();
+    if (parent != -1) {
+      const auto &parentShadowNode = uiManager->getHost()->GetShadowNodeForTag(parent);
+      const auto &parentVM = parentShadowNode.m_viewManager;
+      if (parentVM->RequiresNativeLayout()) {
+        return;
+      }
+    }
+  }
+
   auto element = viewToUpdate.as<xaml::UIElement>();
   if (element == nullptr) {
     // TODO: Assert
@@ -324,15 +333,18 @@ void ViewManagerBase::SetLayoutProps(
   }
   auto fe = element.as<xaml::FrameworkElement>();
 
+  const bool layoutHasChanged = left != ViewPanel::GetLeft(element) || top != ViewPanel::GetTop(element) ||
+      width != fe.Width() || height != fe.Height();
+
   // Set Position & Size Properties
-  react::uwp::ViewPanel::SetLeft(element, left);
-  react::uwp::ViewPanel::SetTop(element, top);
+  ViewPanel::SetLeft(element, left);
+  ViewPanel::SetTop(element, top);
 
   fe.Width(width);
   fe.Height(height);
 
   // Fire Events
-  if (nodeToUpdate.m_onLayoutRegistered) {
+  if (layoutHasChanged && nodeToUpdate.m_onLayoutRegistered) {
     int64_t tag = GetTag(viewToUpdate);
     folly::dynamic layout = folly::dynamic::object("x", left)("y", top)("height", height)("width", width);
 

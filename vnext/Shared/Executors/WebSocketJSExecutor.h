@@ -3,13 +3,10 @@
 
 #pragma once
 
-#pragma warning(push)
-#pragma warning(disable : 4146)
 #include <DevServerHelper.h>
 #include <cxxreact/JSExecutor.h>
 #include <cxxreact/JSModulesUnbundle.h>
 #include <cxxreact/MessageQueueThread.h>
-#pragma warning(pop)
 
 #include <WebSocketJSExecutorFactory.h>
 
@@ -25,7 +22,7 @@ class RAMBundleRegistry;
 }
 } // namespace facebook
 
-namespace react::uwp {
+namespace Microsoft::ReactNative {
 
 class MessageQueueThread;
 
@@ -124,4 +121,4 @@ class WebSocketJSExecutor : public facebook::react::JSExecutor,
   std::atomic<LONG> m_requestId{0};
 };
 
-} // namespace react::uwp
+} // namespace Microsoft::ReactNative

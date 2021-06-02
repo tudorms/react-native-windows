@@ -3,6 +3,7 @@ name: $(Date:yyyyMMdd).$(Rev:r)
 trigger: none # will disable CI builds entirely
 
 pr:
+  - main
   - master
   - "*-stable"
 
@@ -16,6 +17,8 @@ stages:
       - job: Setup
         variables:
           - template: variables/vs2019.yml
+        pool:
+          vmImage: windows-2019
         steps:
           - task: powershell@2
             name: checkPayload
@@ -24,57 +27,21 @@ stages:
               targetType: filePath
               filePath: .ado/scripts/shouldSkipPRBuild.ps1
 
-  - stage: Build
-    displayName: Build 🔨
-    dependsOn: Setup
-    condition: ne( dependencies.Setup.outputs['checkPayload.shouldSkipPRBuild'], 'True' )
-    jobs:
-      - template: jobs/universal.yml
-        parameters:
-          buildEnvironment: PullRequest
+          - template: templates/yarn-install.yml
 
-      - template: jobs/desktop.yml
-        parameters:
-          buildEnvironment: PullRequest
-  
-      - template: jobs/nuget-desktop.yml
+          - template: templates/compute-beachball-branch-name.yml
 
-      - template: jobs/cli-init.yml
-        parameters:
-          # The Nuget CLI verification is part of 'Build' to speed up the verification
-          buildEnvironment: PullRequest
-          buildNuGetOnly: true
+          - task: CmdLine@2
+            displayName: Check for change files
+            inputs:
+              script: npx --no-install beachball check --branch origin/$(BeachBallBranchName) --changehint "##vso[task.logissue type=error]Run `yarn change` from root of repo to generate a change file."
+
+          - template: templates/set-version-vars.yml
+            parameters:
+              buildEnvironment: Continuous
+
+          - template: templates/publish-version-vars.yml
           
-  - stage: IntegrationTests
-    displayName: Tests 🧪
-    dependsOn: Setup
-    condition: ne( dependencies.Setup.outputs['checkPayload.shouldSkipPRBuild'], 'False' )
-    jobs:
-      - template: jobs/jschecks.yml
-
-      - template: jobs/macos-tests.yml
-
-      - template: jobs/playground.yml
-        parameters:
-          buildEnvironment: PullRequest
-
-      - template: jobs/sample-apps.yml
-        parameters:
-          buildEnvironment: PullRequest
-
-      - template: jobs/e2e-test.yml
-        parameters:
-          buildEnvironment: PullRequest
-
-      - template: jobs/integration-test.yml
-        parameters:
-          buildEnvironment: PullRequest
-
-  - stage: CLI
-    displayName: Cli 🖥
-    dependsOn: Setup
-    condition: ne( dependencies.Setup.outputs['checkPayload.shouldSkipPRBuild'], 'False' )
-    jobs:
-      - template: jobs/cli-init.yml
-        parameters:
-          buildEnvironment: PullRequest
+  - template: stages.yml
+    parameters:
+      buildEnvironment: PullRequest

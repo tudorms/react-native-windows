@@ -3,9 +3,8 @@
  * Licensed under the MIT License.
  * @format
  */
-'use strict';
 
-import * as React from 'react';
+import React from 'react';
 import {
   requireNativeComponent,
   processColor,

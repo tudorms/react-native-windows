@@ -31,7 +31,7 @@ class PopupShadowNode : public ShadowNodeBase {
   PopupShadowNode() = default;
   virtual ~PopupShadowNode();
 
-  void createView() override;
+  void createView(const winrt::Microsoft::ReactNative::JSValueObject &) override;
   void AddView(ShadowNode &child, int64_t index) override;
   virtual void removeAllChildren() override;
   virtual void RemoveChildAt(int64_t indexToRemove) override;
@@ -73,12 +73,13 @@ xaml::Controls::ContentControl PopupShadowNode::GetControl() {
   return control;
 }
 
-void PopupShadowNode::createView() {
-  Super::createView();
+void PopupShadowNode::createView(const winrt::Microsoft::ReactNative::JSValueObject &props) {
+  Super::createView(props);
 
   auto popup = GetView().as<winrt::Popup>();
   auto control = GetControl();
-  m_touchEventHandler = std::make_unique<TouchEventHandler>(GetViewManager()->GetReactContext());
+  m_touchEventHandler = std::make_unique<TouchEventHandler>(
+      GetViewManager()->GetReactContext(), false /*Popup not supported in fabric currently*/);
   m_previewKeyboardEventHandlerOnRoot =
       std::make_unique<PreviewKeyboardEventHandlerOnRoot>(GetViewManager()->GetReactContext());
 
@@ -95,7 +96,7 @@ void PopupShadowNode::createView() {
       // popups/flyouts. We apply this translation on open of the popup.
       // (Translation is only supported on RS5+, eg. IUIElement9)
       if (auto uiElement9 = GetView().try_as<xaml::IUIElement9>()) {
-        auto numOpenPopups = react::uwp::CountOpenPopups();
+        auto numOpenPopups = CountOpenPopups();
         if (numOpenPopups > 0) {
           winrt::Numerics::float3 translation{0, 0, (float)16 * numOpenPopups};
           popup.Translation(translation);
@@ -314,7 +315,7 @@ ShadowNode *PopupViewManager::createShadow() const {
   return new PopupShadowNode();
 }
 
-XamlView PopupViewManager::CreateViewCore(int64_t /*tag*/) {
+XamlView PopupViewManager::CreateViewCore(int64_t /*tag*/, const winrt::Microsoft::ReactNative::JSValueObject &) {
   auto popup = winrt::Popup();
   auto control = xaml::Controls::ContentControl();
 

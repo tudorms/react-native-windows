@@ -9,21 +9,21 @@
 
 'use strict';
 
-const Platform = require('../Utilities/Platform');
-const React = require('react');
-const StyleSheet = require('../StyleSheet/StyleSheet');
-const Text = require('../Text/Text');
+import * as React from 'react';
+import Platform from '../Utilities/Platform';
+import StyleSheet, {type ColorValue} from '../StyleSheet/StyleSheet';
+import Text from '../Text/Text';
 // [Windows
-// const TouchableNativeFeedback = require('./Touchable/TouchableNativeFeedback');
-// const TouchableOpacity = require('./Touchable/TouchableOpacity');
-const TouchableHighlight = require('./Touchable/TouchableHighlight');
+// import TouchableNativeFeedback from './Touchable/TouchableNativeFeedback';
+// import TouchableOpacity from './Touchable/TouchableOpacity';
+import TouchableHighlight from './Touchable/TouchableHighlight';
+import {PlatformColor} from '../StyleSheet/PlatformColorValueTypes';
 // Windows]
-const View = require('./View/View');
+import View from './View/View';
+import invariant from 'invariant';
 
-const invariant = require('invariant');
-
+import type {AccessibilityState} from './View/ViewAccessibility';
 import type {PressEvent} from '../Types/CoreEventTypes';
-import type {ColorValue} from '../StyleSheet/StyleSheet';
 
 type ButtonProps = $ReadOnly<{|
   /**
@@ -135,6 +135,11 @@ type ButtonProps = $ReadOnly<{|
     Used to locate this view in end-to-end tests.
    */
   testID?: ?string,
+
+  /**
+   * Accessibility props.
+   */
+  accessibilityState?: ?AccessibilityState,
 
   // [Windows
   /**
@@ -255,7 +260,15 @@ type ButtonProps = $ReadOnly<{|
   ```
  */
 
-class Button extends React.Component<ButtonProps> {
+class Button extends React.Component<ButtonProps, {hover: boolean}> {
+  // [Windows
+  constructor(props: Object) {
+    super(props);
+    this.state = {
+      hover: false,
+    };
+  }
+  // Windows]
   render(): React.Node {
     const {
       accessibilityLabel,
@@ -269,7 +282,6 @@ class Button extends React.Component<ButtonProps> {
       nextFocusLeft,
       nextFocusRight,
       nextFocusUp,
-      disabled,
       testID,
       tabIndex,
     } = this.props;
@@ -282,12 +294,22 @@ class Button extends React.Component<ButtonProps> {
         buttonStyles.push({backgroundColor: color});
       }
     }
-    const accessibilityState = {};
+
+    const disabled =
+      this.props.disabled != null
+        ? this.props.disabled
+        : this.props.accessibilityState?.disabled;
+
+    const accessibilityState =
+      disabled !== this.props.accessibilityState?.disabled
+        ? {...this.props.accessibilityState, disabled}
+        : this.props.accessibilityState;
+
     if (disabled) {
       buttonStyles.push(styles.buttonDisabled);
       textStyles.push(styles.textDisabled);
-      accessibilityState.disabled = true;
     }
+
     invariant(
       typeof title === 'string',
       'The title prop of a Button must be a string',
@@ -298,29 +320,74 @@ class Button extends React.Component<ButtonProps> {
     const Touchable = TouchableHighlight;
     //  Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
     // Windows]
-    return (
-      <Touchable
-        accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-        accessibilityState={accessibilityState}
-        hasTVPreferredFocus={hasTVPreferredFocus}
-        nextFocusDown={nextFocusDown}
-        nextFocusForward={nextFocusForward}
-        nextFocusLeft={nextFocusLeft}
-        nextFocusRight={nextFocusRight}
-        nextFocusUp={nextFocusUp}
-        testID={testID}
-        disabled={disabled}
-        onPress={onPress}
-        tabIndex={tabIndex}
-        touchSoundDisabled={touchSoundDisabled}>
-        <View style={buttonStyles}>
+    // [Windows
+    if (Platform.OS === 'windows') {
+      return (
+        <Touchable
+          accessibilityLabel={accessibilityLabel}
+          accessibilityRole="button"
+          accessibilityState={accessibilityState}
+          hasTVPreferredFocus={hasTVPreferredFocus}
+          nextFocusDown={nextFocusDown}
+          nextFocusForward={nextFocusForward}
+          nextFocusLeft={nextFocusLeft}
+          nextFocusRight={nextFocusRight}
+          nextFocusUp={nextFocusUp}
+          testID={testID}
+          disabled={disabled}
+          onPress={onPress}
+          tabIndex={tabIndex}
+          touchSoundDisabled={touchSoundDisabled}
+          underlayColor={PlatformColor('ButtonBackgroundPressed')}
+          style={
+            this.state.hover
+              ? [
+                  buttonStyles,
+                  {
+                    backgroundColor: PlatformColor(
+                      'ButtonBackgroundPointerOver',
+                    ),
+                  },
+                ]
+              : buttonStyles
+          }
+          onMouseEnter={() => {
+            if (!disabled) this.setState({hover: true});
+          }}
+          onMouseLeave={() => {
+            if (!disabled) this.setState({hover: false});
+          }}>
           <Text style={textStyles} disabled={disabled}>
             {formattedTitle}
           </Text>
-        </View>
-      </Touchable>
-    );
+        </Touchable>
+      );
+    } else {
+      return (
+        <Touchable
+          accessibilityLabel={accessibilityLabel}
+          accessibilityRole="button"
+          accessibilityState={accessibilityState}
+          hasTVPreferredFocus={hasTVPreferredFocus}
+          nextFocusDown={nextFocusDown}
+          nextFocusForward={nextFocusForward}
+          nextFocusLeft={nextFocusLeft}
+          nextFocusRight={nextFocusRight}
+          nextFocusUp={nextFocusUp}
+          testID={testID}
+          disabled={disabled}
+          onPress={onPress}
+          tabIndex={tabIndex}
+          touchSoundDisabled={touchSoundDisabled}>
+          <View style={buttonStyles}>
+            <Text style={textStyles} disabled={disabled}>
+              {formattedTitle}
+            </Text>
+          </View>
+        </Touchable>
+      );
+    }
+    // Windows]
   }
 }
 
@@ -335,8 +402,8 @@ const styles = StyleSheet.create({
     },
     // [Windows
     windows: {
-      backgroundColor: '#2196F3',
-      borderRadius: 2,
+      backgroundColor: PlatformColor('ButtonBackground'),
+      borderRadius: 3,
     },
     // Windows]
   }),
@@ -355,8 +422,9 @@ const styles = StyleSheet.create({
       },
       // [Windows
       windows: {
-        color: 'white',
-        fontWeight: '500',
+        color: PlatformColor('ButtonForeground'),
+        fontWeight: '400',
+        fontSize: 14,
       },
       // Windows]
     }),
@@ -368,7 +436,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#dfdfdf',
     },
     windows: {
-      backgroundColor: '#dfdfdf',
+      backgroundColor: PlatformColor('ButtonBackgroundDisabled'),
     },
   }),
   textDisabled: Platform.select({
@@ -380,7 +448,7 @@ const styles = StyleSheet.create({
     },
     // [Windows
     windows: {
-      color: '#a1a1a1',
+      color: PlatformColor('ButtonForegroundDisabled'),
     },
     // Windows]
   }),

@@ -4,15 +4,16 @@
  * @format
  */
 
-import * as chalk from 'chalk';
-import * as path from 'path';
-import * as username from 'username';
-import * as uuid from 'uuid';
-import * as childProcess from 'child_process';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as semver from 'semver';
-import * as _ from 'lodash';
+import chalk from 'chalk';
+import path from 'path';
+import username from 'username';
+import uuid from 'uuid';
+import childProcess from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import semver from 'semver';
+import _ from 'lodash';
+import findUp from 'find-up';
 import {readProjectFile, findPropertyValue} from '../config/configUtils';
 
 import {
@@ -102,6 +103,12 @@ function pascalCase(str: string) {
   return camelCase[0].toUpperCase() + camelCase.substr(1);
 }
 
+function resolveRnwPath(subpath: string): string {
+  return require.resolve(path.join('react-native-windows', subpath), {
+    paths: [process.cwd()],
+  });
+}
+
 // Existing high cyclomatic complexity
 // eslint-disable-next-line complexity
 export async function copyProjectTemplateAndReplace(
@@ -168,10 +175,16 @@ export async function copyProjectTemplateAndReplace(
   const srcPath = path.join(srcRootPath, `${language}-${projectType}`);
   const sharedPath = path.join(srcRootPath, `shared-${projectType}`);
   const projectGuid = uuid.v4();
-  const rnwVersion = require('react-native-windows/package.json').version;
+  const rnwVersion = require(resolveRnwPath('package.json')).version;
   const nugetVersion = options.nuGetTestVersion || rnwVersion;
   const packageGuid = uuid.v4();
   const currentUser = username.sync()!; // Gets the current username depending on the platform.
+
+  let mainComponentName = newProjectName;
+  const appJsonPath = await findUp('app.json', {cwd: destPath});
+  if (appJsonPath) {
+    mainComponentName = JSON.parse(fs.readFileSync(appJsonPath, 'utf8')).name;
+  }
 
   const certificateThumbprint =
     projectType === 'app'
@@ -188,10 +201,7 @@ export async function copyProjectTemplateAndReplace(
     : 'Windows.UI.Xaml';
   const xamlNamespaceCpp = toCppNamespace(xamlNamespace);
 
-  const winuiPropsPath = require.resolve(
-    'react-native-windows/PropertySheets/WinUI.props',
-    {paths: [process.cwd()]},
-  );
+  const winuiPropsPath = resolveRnwPath('PropertySheets/WinUI.props');
   const winuiProps = readProjectFile(winuiPropsPath);
   const winui3Version = findPropertyValue(
     winuiProps,
@@ -203,26 +213,39 @@ export async function copyProjectTemplateAndReplace(
     'WinUI2xVersion',
     winuiPropsPath,
   );
+
+  const jsEnginePropsPath = resolveRnwPath('PropertySheets/JSengine.props');
+  const hermesVersion = findPropertyValue(
+    readProjectFile(jsEnginePropsPath),
+    'HermesVersion',
+    jsEnginePropsPath,
+  );
+
   const csNugetPackages: NugetPackage[] = [
     {
       id: 'Microsoft.NETCore.UniversalWindowsPlatform',
       version: '6.2.9',
     },
+    /* #7225 ReactNative.Hermes.Windows is not yet seen as compatible for usage in C# projects
+    {
+      id: 'ReactNative.Hermes.Windows',
+      version: hermesVersion,
+    }, */
   ];
 
   const cppNugetPackages: CppNugetPackage[] = [
     {
       id: 'Microsoft.Windows.CppWinRT',
-      version: '2.0.200615.7',
+      version: '2.0.210312.4',
       propsTopOfFile: true,
       hasProps: true,
       hasTargets: true,
     },
     {
-      id: options.useWinUI3 ? 'Microsoft.WinUI' : 'Microsoft.UI.Xaml',
-      version: options.useWinUI3 ? winui3Version : winui2xVersion,
-      hasProps: false, // WinUI/MUX props and targets get handled by RNW's WinUI.props.
-      hasTargets: false,
+      id: 'ReactNative.Hermes.Windows',
+      version: hermesVersion,
+      hasProps: false,
+      hasTargets: true,
     },
   ];
 
@@ -247,14 +270,15 @@ export async function copyProjectTemplateAndReplace(
     });
   }
 
-  if (options.useHermes) {
-    cppNugetPackages.push({
-      id: 'ReactNative.Hermes.Windows',
-      version: '0.7.2',
-      hasProps: false,
-      hasTargets: true,
-    });
-  }
+  const packagesConfigCppNugetPackages = [
+    ...cppNugetPackages,
+    {
+      id: options.useWinUI3 ? 'Microsoft.WinUI' : 'Microsoft.UI.Xaml',
+      version: options.useWinUI3 ? winui3Version : winui2xVersion,
+      hasProps: false, // WinUI/MUX props and targets get handled by RNW's WinUI.props.
+      hasTargets: false,
+    },
+  ];
 
   const templateVars: Record<string, any> = {
     useMustache: true,
@@ -264,6 +288,8 @@ export async function copyProjectTemplateAndReplace(
     namespace: namespace,
     namespaceCpp: namespaceCpp,
     languageIsCpp: language === 'cpp',
+
+    mainComponentName: mainComponentName,
 
     // Visual Studio is very picky about the casing of the guids for projects, project references and the solution
     // https://www.bing.com/search?q=visual+studio+project+guid+casing&cvid=311a5ad7f9fc41089507b24600d23ee7&FORM=ANAB01&PC=U531
@@ -285,6 +311,7 @@ export async function copyProjectTemplateAndReplace(
     xamlNamespace: xamlNamespace,
     xamlNamespaceCpp: xamlNamespaceCpp,
     cppNugetPackages: cppNugetPackages,
+    packagesConfigCppNugetPackages: packagesConfigCppNugetPackages,
 
     // cs template variables
     csNugetPackages: csNugetPackages,
@@ -464,18 +491,19 @@ export async function copyProjectTemplateAndReplace(
   if (fs.existsSync(path.join(sharedPath, projDir))) {
     const sharedProjMappings = [];
 
-    // Once we are publishing to nuget.org, this shouldn't be needed anymore
-    if (options.experimentalNuGetDependency) {
-      sharedProjMappings.push({
-        from: path.join(sharedPath, projDir, 'NuGet.Config'),
-        to: path.join(windowsDir, 'NuGet.Config'),
-      });
-    }
+    sharedProjMappings.push({
+      from: path.join(sharedPath, projDir, 'NuGet.Config'),
+      to: path.join(windowsDir, 'NuGet.Config'),
+    });
 
-    if (fs.existsSync(path.join(sharedPath, projDir, 'BuildFlags.props'))) {
+    if (
+      fs.existsSync(
+        path.join(sharedPath, projDir, 'ExperimentalFeatures.props'),
+      )
+    ) {
       sharedProjMappings.push({
-        from: path.join(sharedPath, projDir, 'BuildFlags.props'),
-        to: path.join(windowsDir, 'BuildFlags.props'),
+        from: path.join(sharedPath, projDir, 'ExperimentalFeatures.props'),
+        to: path.join(windowsDir, 'ExperimentalFeatures.props'),
       });
     }
 
@@ -555,6 +583,23 @@ export async function installScriptsAndDependencies(options: {
   const rnPackage = await findPackage('react-native');
   if (!rnPackage) {
     throw new Error('Could not locate the package for react-native');
+  }
+
+  // We add an exclusionList from metro config. This will be hoisted, but add
+  // an explict dep because we require it directly.
+  const cliPackage = await findPackage('@react-native-community/cli', {
+    searchPath: rnPackage.path,
+  });
+  const metroConfigPackage = await findPackage('metro-config', {
+    searchPath: cliPackage?.path || rnPackage.path,
+  });
+
+  if (metroConfigPackage) {
+    await projectPackage.mergeProps({
+      devDependencies: {
+        'metro-config': `^${metroConfigPackage.json.version}`,
+      },
+    });
   }
 
   const rnPeerDependency = rnwPackage.json.peerDependencies['react-native'];

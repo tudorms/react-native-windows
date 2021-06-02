@@ -2,6 +2,244 @@
   "name": "@rnw-scripts/create-github-releases",
   "entries": [
     {
+      "date": "Fri, 21 May 2021 05:17:18 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.1.0",
+      "version": "1.1.0",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Link to curated release notes in patch release notes",
+            "author": "ngerlem@microsoft.com",
+            "commit": "5fd1b76a0770a5a07eda09bc2ca501fc2ce1aa0f",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Bump @rnw-scripts/just-task to v2.1.1",
+            "author": "ngerlem@microsoft.com",
+            "commit": "5cc9c87a48b392d287fa953d8d23a8188b689545",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "prerelease": [
+          {
+            "comment": "Bump @react-native-windows/find-repo-root to v0.0.0-canary.20",
+            "author": "ngerlem@microsoft.com",
+            "commit": "5cc9c87a48b392d287fa953d8d23a8188b689545",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 29 Apr 2021 05:07:20 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.27",
+      "version": "1.0.27",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update @octokit/rest",
+            "author": "ngerlem@microsoft.com",
+            "commit": "46b8ac76740b6483956efd404029a1faab1b7e91",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 04 Mar 2021 05:05:53 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.26",
+      "version": "1.0.26",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update yargs version used and patch y18n version 4.0.0 to 4.0.1 as used by detox of transitive dependencies to address https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-7774",
+            "author": "dannyvv@microsoft.com",
+            "commit": "e834e7c206a0f1405bf4bbf406cb7b11bf413d94",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 11 Feb 2021 05:08:29 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.25",
+      "version": "1.0.25",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Bump @rnw-scripts/just-task to v2.1.0",
+            "author": "ngerlem@microsoft.com",
+            "commit": "ab41a9b88db59cba0eae1ff7a59c1b550cc8c2bf",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "prerelease": [
+          {
+            "comment": "Bump @react-native-windows/find-repo-root to v0.0.0-canary.19",
+            "author": "ngerlem@microsoft.com",
+            "commit": "ab41a9b88db59cba0eae1ff7a59c1b550cc8c2bf",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 09 Feb 2021 05:07:37 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.24",
+      "version": "1.0.24",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Bump just-scripts from 1.3.2 to 1.3.3",
+            "author": "dannyvv@microsoft.com",
+            "commit": "ef4046c6a798446b6404dc26d0dd39224a0d7274",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "prerelease": [
+          {
+            "comment": "Bump @react-native-windows/find-repo-root to v0.0.0-canary.18",
+            "author": "dannyvv@microsoft.com",
+            "commit": "ef4046c6a798446b6404dc26d0dd39224a0d7274",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Fri, 05 Feb 2021 05:05:05 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.23",
+      "version": "1.0.23",
+      "comments": {
+        "none": [
+          {
+            "comment": "Make @types/node version explicit",
+            "author": "ngerlem@microsoft.com",
+            "commit": "22ee9e8c47a0c794e7d509a471547ba873578e31",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 28 Jan 2021 05:06:47 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.23",
+      "version": "1.0.23",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Leverage default config support in Just library and factor out common tasks",
+            "author": "dannyvv@microsoft.com",
+            "commit": "54fb284afaf1b12ab51f1c29bb7ca67eddab8db1",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "prerelease": [
+          {
+            "comment": "Bump @react-native-windows/find-repo-root to v0.0.0-canary.17",
+            "author": "dannyvv@microsoft.com",
+            "commit": "54fb284afaf1b12ab51f1c29bb7ca67eddab8db1",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 27 Jan 2021 05:06:36 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.22",
+      "version": "1.0.22",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Show TS Stack Traces on Uncaught CLI Exception",
+            "author": "ngerlem@microsoft.com",
+            "commit": "ed5cbe4de1abac005e94ddc3564af4bb60b804f0",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 26 Jan 2021 05:06:39 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.21",
+      "version": "1.0.21",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update @types package versions in package.json from dependabot updates to yarn.lock",
+            "author": "dannyvv@microsoft.com",
+            "commit": "b8f2beec9851dffe3188156c859cb123de926ba0",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "none": [
+          {
+            "comment": "Update just-scripts to remove yargs-parser resolution",
+            "author": "ngerlem@microsoft.com",
+            "commit": "3d41c761d18cdc771a635bf9f5ef1259db9a27be",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "prerelease": [
+          {
+            "comment": "Bump @react-native-windows/find-repo-root to v0.0.0-canary.16",
+            "author": "ngerlem@microsoft.com",
+            "commit": "3d41c761d18cdc771a635bf9f5ef1259db9a27be",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 20 Jan 2021 01:45:54 GMT",
+      "tag": "@rnw-scripts/create-github-releases_v1.0.20",
+      "version": "1.0.20",
+      "comments": {
+        "none": [
+          {
+            "comment": "Bump internally published packages to 1.0",
+            "author": "ngerlem@microsoft.com",
+            "commit": "982fb19448d7c9ed3f12fa27182fa69be83478c7",
+            "package": "@rnw-scripts/create-github-releases"
+          },
+          {
+            "comment": "Bump @rnw-scripts/ts-config to v1.1.0",
+            "author": "ngerlem@microsoft.com",
+            "commit": "982fb19448d7c9ed3f12fa27182fa69be83478c7",
+            "package": "@rnw-scripts/create-github-releases"
+          },
+          {
+            "comment": "Bump @rnw-scripts/just-task to v1.0.6",
+            "author": "ngerlem@microsoft.com",
+            "commit": "982fb19448d7c9ed3f12fa27182fa69be83478c7",
+            "package": "@rnw-scripts/create-github-releases"
+          },
+          {
+            "comment": "Bump @react-native-windows/find-repo-root to v0.0.0-canary.15",
+            "author": "ngerlem@microsoft.com",
+            "commit": "982fb19448d7c9ed3f12fa27182fa69be83478c7",
+            "package": "@rnw-scripts/create-github-releases"
+          },
+          {
+            "comment": "Bump @rnw-scripts/eslint-config to v1.1.6",
+            "author": "ngerlem@microsoft.com",
+            "commit": "982fb19448d7c9ed3f12fa27182fa69be83478c7",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Add warning to release creation script when publishing multiple releases",
+            "author": "ngerlem@microsoft.com",
+            "commit": "582e72b291d3dc48b8414c24e7c52b9396cec1ac",
+            "package": "@rnw-scripts/create-github-releases"
+          }
+        ]
+      }
+    },
+    {
       "date": "Sat, 16 Jan 2021 05:05:46 GMT",
       "tag": "@rnw-scripts/create-github-releases_v0.0.19",
       "version": "0.0.19",

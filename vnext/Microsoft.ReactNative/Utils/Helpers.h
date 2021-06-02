@@ -8,7 +8,7 @@
 #include <React.h>
 #include <stdint.h>
 
-namespace react::uwp {
+namespace Microsoft::ReactNative {
 
 using namespace std;
 
@@ -31,4 +31,6 @@ bool IsRS5OrHigher();
 bool Is19H1OrHigher();
 
 bool IsXamlIsland();
-} // namespace react::uwp
+bool IsWinUI3Island();
+
+} // namespace Microsoft::ReactNative

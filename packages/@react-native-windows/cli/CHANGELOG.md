@@ -1,8 +1,191 @@
 # Change Log - @react-native-windows/cli
 
-This log was last generated on Fri, 15 Jan 2021 05:07:01 GMT and should not be manually modified.
+This log was last generated on Fri, 21 May 2021 21:40:00 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.0-canary.71
+
+Fri, 21 May 2021 21:40:00 GMT
+
+### Changes
+
+- Add "--deploy-from-layout" option (ngerlem@microsoft.com)
+
+## 0.0.0-canary.70
+
+Fri, 21 May 2021 05:17:18 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.1.1 (ngerlem@microsoft.com)
+- Bump @rnw-scripts/jest-unittest-config to v1.2.1 (ngerlem@microsoft.com)
+
+### Changes
+
+- Integrate Apr 28 (base of 0.65) Nightly RN Build (ngerlem@microsoft.com)
+
+## 0.0.0-canary.69
+
+Thu, 29 Apr 2021 05:07:20 GMT
+
+### Changes
+
+- Remove ARM32 Support (ngerlem@microsoft.com)
+- Remove version from ExperimentalFeatures.props links (ngerlem@microsoft.com)
+- Replace `inquirer` with `prompts` in CLI (ngerlem@microsoft.com)
+
+## 0.0.0-canary.68
+
+Sat, 17 Apr 2021 05:08:13 GMT
+
+### Changes
+
+- Always write nuget.config in init CLI (asklar@microsoft.com)
+
+## 0.0.0-canary.67
+
+Thu, 25 Mar 2021 05:06:57 GMT
+
+### Changes
+
+- Fix app template to use app.json's name for main component name (jthysell@microsoft.com)
+- Fix deploy of x64 when x86 has already been built (asklar@microsoft.com)
+
+## 0.0.0-canary.66
+
+Tue, 23 Mar 2021 05:06:08 GMT
+
+### Changes
+
+- Autolinking of non-direct dependencies doesn't add the project to the solution (asklar@microsoft.com)
+
+## 0.0.0-canary.65
+
+Sun, 14 Mar 2021 05:06:38 GMT
+
+### Changes
+
+- update to newer cppwinrt, 2-3% reduction in binary size (asklar@microsoft.com)
+- Bump xmldom from 0.3.0 to 0.5.0 (asklar@microsoft.com)
+
+## 0.0.0-canary.64
+
+Fri, 12 Mar 2021 05:07:46 GMT
+
+### Changes
+
+- Include Hermes NuGet Package By Default (ngerlem@microsoft.com)
+
+## 0.0.0-canary.63
+
+Tue, 23 Feb 2021 05:06:42 GMT
+
+### Changes
+
+- Fix autolinking for solutions that have 'Any CPU' projects (asklar@microsoft.com)
+
+## 0.0.0-canary.62
+
+Sat, 20 Feb 2021 05:06:12 GMT
+
+### Changes
+
+- Fix projectName issue with C# projects and deploy tool version check (asklar@microsoft.com)
+
+## 0.0.0-canary.61
+
+Thu, 18 Feb 2021 05:07:11 GMT
+
+### Changes
+
+- Avoid MaxPath issue with telemetry in UnitTest project (dannyvv@microsoft.com)
+- Integrate rnw-dependencies into react-native doctor (30809111+acoates-ms@users.noreply.github.com)
+- Fixes autolink check error to incude command to fix it (jthysell@microsoft.com)
+
+## 0.0.0-canary.60
+
+Sun, 14 Feb 2021 05:06:10 GMT
+
+### Changes
+
+- Update WinUI 3 package to Preview 4 (asklar@microsoft.com)
+- fix xml indentation of autolinkedNativeModules.g.targets (asklar@microsoft.com)
+
+## 0.0.0-canary.59
+
+Fri, 12 Feb 2021 05:19:35 GMT
+
+### Changes
+
+- move autolink FS operations to async (asklar@microsoft.com)
+
+## 0.0.0-canary.58
+
+Thu, 11 Feb 2021 05:08:29 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.1.0 (ngerlem@microsoft.com)
+- Bump @rnw-scripts/jest-unittest-config to v1.2.0 (ngerlem@microsoft.com)
+
+### Changes
+
+- Refactor autolinking code (asklar@microsoft.com)
+- Rename "BuildFlags.props" to "ExperimentalFeatures.props" (ngerlem@microsoft.com)
+- Better dependency warning on run-windows build error (ngerlem@microsoft.com)
+
+## 0.0.0-canary.57
+
+Wed, 10 Feb 2021 05:06:37 GMT
+
+### Changes
+
+- Build apps for either/or WinUI 3 or XAML (asklar@microsoft.com)
+
+## 0.0.0-canary.56
+
+Tue, 09 Feb 2021 05:07:37 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.0.2 (dannyvv@microsoft.com)
+
+### Changes
+
+- Bump just-scripts from 1.3.2 to 1.3.3 (dannyvv@microsoft.com)
+
+## 0.0.0-canary.55
+
+Thu, 28 Jan 2021 05:06:47 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.0.1 (dannyvv@microsoft.com)
+
+### Changes
+
+- Leverage default config support in Just library and factor out common tasks (dannyvv@microsoft.com)
+
+## 0.0.0-canary.54
+
+Tue, 26 Jan 2021 05:06:39 GMT
+
+### Patches
+
+- Bump @rnw-scripts/just-task to v2.0.0 (ngerlem@microsoft.com)
+
+### Changes
+
+- Update @types package versions in package.json from dependabot updates to yarn.lock (dannyvv@microsoft.com)
+
+## 0.0.0-canary.53
+
+Thu, 21 Jan 2021 18:54:54 GMT
+
+### Changes
+
+- Update V8 and Hermes package versions (tudor.mihai@microsoft.com)
 
 ## 0.0.0-canary.52
 

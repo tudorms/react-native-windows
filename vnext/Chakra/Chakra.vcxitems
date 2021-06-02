@@ -13,9 +13,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ChakraExecutor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ChakraHelpers.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)ChakraNativeModules.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ChakraPlatform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ChakraTracing.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ChakraUtils.cpp" />
@@ -24,10 +22,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ChakraCoreDebugger.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ChakraExecutor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ChakraHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ChakraInstanceArgs.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ChakraNativeModules.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ChakraPlatform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ChakraTracing.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ChakraUtils.h" />

@@ -10,15 +10,22 @@ const fs = require('fs');
 const path = require('path');
 
 const {
+  argv,
   cleanTask,
   eslintTask,
   logger,
   jestTask,
+  option,
   series,
   task,
   tscTask,
   tscWatchTask,
+  parallel
 } = require('just-scripts');
+
+const depcheck = require('depcheck');
+
+option('updateSnapshot', {alias: 'u', boolean: true})
 
 task('clean', cleanTask(['lib-commonjs']));
 
@@ -31,10 +38,32 @@ task('build', series('ts'));
 
 task('rebuild', series('clean', 'build'));
 
+task('depcheck', async () => {
+  const depcheckConfig = path.join(process.cwd(), 'depcheck.config.js');
+  const userDepcheckOptions = fs.existsSync(depcheckConfig) ? require(depcheckConfig) : {};
+  const depcheckOptions = {
+    ...userDepcheckOptions,
+    specials: [
+      depcheck.special.eslint,
+      depcheck.special.jest,
+    ],
+  }
+
+  const result = await depcheck(process.cwd(), depcheckOptions);
+  if (Object.keys(result.missing).length !== 0) {
+    logger.error(
+      `The following dependencies are used, but not declared in "package.json": ` +
+      `${JSON.stringify(result.missing, null, 2)}`
+    );
+    
+    process.exit(1);
+  }
+});
+
 task('eslint', eslintTask());
 task('eslint:fix', eslintTask({fix: true}));
 
-task('lint', series('eslint'));
+task('lint', parallel('eslint', 'depcheck'));
 task('lint:fix', series('eslint:fix'));
 
 task('watch', tscWatchTask({outDir: 'lib-commonjs'}));
@@ -43,7 +72,7 @@ task(
   'unitTest',
   jestTask({
     config: require.resolve('@rnw-scripts/jest-unittest-config'),
-    _: ['--verbose'],
+    updateSnapshot: argv().updateSnapshot
   }),
 );
 task(
@@ -51,7 +80,7 @@ task(
   jestTask({
     config: require.resolve('@rnw-scripts/jest-e2e-config'),
     runInBand: true,
-    _: ['--verbose'],
+    updateSnapshot: argv().updateSnapshot
   }),
 );
 

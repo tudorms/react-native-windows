@@ -19,14 +19,14 @@
 
 // Hx/OFFICEDEV: Ignore warnings
 #pragma warning(push)
-#pragma warning(disable : 4100 4101 4244 4290 4456)
+#pragma warning(disable : 4100 4101 4290 4456)
 
 #if _MSC_VER <= 1913
 // VC 19 (2015-2017.6) cannot optimize co_await/cppwinrt usage
 #pragma optimize("", off)
 #endif
 
-namespace react::uwp {
+namespace Microsoft::ReactNative {
 
 WebSocketJSExecutor::WebSocketJSExecutor(
     std::shared_ptr<facebook::react::ExecutorDelegate> delegate,
@@ -37,18 +37,20 @@ WebSocketJSExecutor::WebSocketJSExecutor(
       m_socketDataWriter(m_socket.OutputStream()) {
   m_msgReceived = m_socket.MessageReceived(winrt::auto_revoke, [this](auto &&, auto &&args) {
     try {
-      std::string response;
-      if (args.MessageType() == winrt::Windows::Networking::Sockets::SocketMessageType::Utf8) {
-        winrt::Windows::Storage::Streams::DataReader reader = args.GetDataReader();
-        reader.UnicodeEncoding(winrt::Windows::Storage::Streams::UnicodeEncoding::Utf8);
-        uint32_t len = reader.UnconsumedBufferLength();
-        std::vector<uint8_t> data(len);
-        reader.ReadBytes(data);
+      if (auto reader = args.GetDataReader()) {
+        if (args.MessageType() == winrt::Windows::Networking::Sockets::SocketMessageType::Utf8) {
+          reader.UnicodeEncoding(winrt::Windows::Storage::Streams::UnicodeEncoding::Utf8);
+          uint32_t len = reader.UnconsumedBufferLength();
+          std::vector<uint8_t> data(len);
+          reader.ReadBytes(data);
 
-        std::string str(Microsoft::Common::Utilities::CheckedReinterpretCast<char *>(data.data()), data.size());
-        OnMessageReceived(str);
+          std::string str(Microsoft::Common::Utilities::CheckedReinterpretCast<char *>(data.data()), data.size());
+          OnMessageReceived(str);
+        } else {
+          OnHitError("Unexpected MessageType from MessageWebSocket.");
+        }
       } else {
-        OnHitError("Unexpected MessageType from MessageWebSocket.");
+        OnHitError("Lost connection to remote JS debugger.");
       }
     } catch (winrt::hresult_error const &e) {
       auto hr = e.code();
@@ -275,7 +277,7 @@ void WebSocketJSExecutor::OnMessageReceived(const std::string &msg) {
   folly::dynamic parsed = folly::parseJson(msg);
   auto it_parsed = parsed.find("replyID");
   if (it_parsed != parsed.items().end()) {
-    int replyId = it_parsed->second.asInt();
+    int replyId = static_cast<int>(it_parsed->second.asInt());
 
     std::lock_guard<std::mutex> lock(m_lockPromises);
     auto it_promise = m_promises.find(replyId);
@@ -294,6 +296,6 @@ void WebSocketJSExecutor::OnMessageReceived(const std::string &msg) {
   }
 }
 
-} // namespace react::uwp
+} // namespace Microsoft::ReactNative
 
 #pragma warning(pop)

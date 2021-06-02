@@ -10,17 +10,18 @@ parameters:
 
 steps:
   - task: PowerShell@2
-    displayName: Display env
+    displayName: Display machine state
     inputs:
       targetType: "inline"
-      script:  gci env:* | sort-object name
-
-  - task: PowerShell@2
-    displayName: Display disksize
-    inputs:
-      targetType: inline # filePath | inline
-      script: |
+      script:  |
+        Write-Host "************** Environment ***********"
+        gci env:* | sort-object name
+        Write-Host "************** Disk Sizes ***********"
         Get-WmiObject Win32_LogicalDisk
+        Write-Host "************** Installed UWP SDK versions ***********"
+        Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\UWPNuGetPackages\Microsoft.Net.Native.Compiler" | Select-Object FullName
+        Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x86.Microsoft.Net.Native.SharedLibrary" | Select-Object FullName
+        Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\UWPNuGetPackages\Microsoft.Net.UWPCoreRuntimeSdk" | Select-Object FullName
 
   # The commit tag in the nuspec requires that we use at least nuget 5.8 (because things break with nuget versions before and Vs 16.8 or later)
   - task: NuGetToolInstaller@0
@@ -36,12 +37,6 @@ steps:
     displayName: Installing Yarm
     inputs:
       script: npm install -g yarn
-
-  # For Appium windows we have to depend on a node package that depends on python (gyp) to perform some install scripts
-  - script: |
-      nuget.exe install python -ExcludeVersion -OutputDirectory $(Build.SourcesDirectory)\Python
-      npm config set python $(Build.SourcesDirectory)/Python/python/tools/python.exe
-    displayName: Get Python
 
   - template: yarn-install.yml
 

@@ -25,7 +25,7 @@ class SwitchShadowNode : public ShadowNodeBase {
 
  public:
   SwitchShadowNode() = default;
-  void createView() override;
+  void createView(const winrt::Microsoft::ReactNative::JSValueObject &) override;
   void updateProperties(winrt::Microsoft::ReactNative::JSValueObject &props) override;
   void UpdateThumbColor();
   void UpdateTrackColor();
@@ -42,8 +42,8 @@ class SwitchShadowNode : public ShadowNodeBase {
   winrt::Microsoft::ReactNative::JSValue m_onTrackColor;
 };
 
-void SwitchShadowNode::createView() {
-  Super::createView();
+void SwitchShadowNode::createView(const winrt::Microsoft::ReactNative::JSValueObject &props) {
+  Super::createView(props);
 
   auto toggleSwitch = GetView().as<winrt::ToggleSwitch>();
   m_toggleSwitchToggledRevoker = toggleSwitch.Toggled(winrt::auto_revoke, [=](auto &&, auto &&) {
@@ -65,8 +65,8 @@ void SwitchShadowNode::UpdateThumbColor() {
   if (toggleSwitch == nullptr)
     return;
 
-  const auto thumbBrush = react::uwp::IsValidColorValue(m_thumbColor) ? react::uwp::BrushFrom(m_thumbColor) : nullptr;
-  react::uwp::UpdateToggleSwitchThumbResourceBrushes(toggleSwitch, thumbBrush);
+  const auto thumbBrush = IsValidColorValue(m_thumbColor) ? BrushFrom(m_thumbColor) : nullptr;
+  UpdateToggleSwitchThumbResourceBrushes(toggleSwitch, thumbBrush);
 }
 
 void SwitchShadowNode::UpdateTrackColor() {
@@ -74,11 +74,9 @@ void SwitchShadowNode::UpdateTrackColor() {
   if (toggleSwitch == nullptr)
     return;
 
-  const auto onTrackBrush =
-      react::uwp::IsValidColorValue(m_onTrackColor) ? react::uwp::BrushFrom(m_onTrackColor) : nullptr;
-  const auto offTrackBrush =
-      react::uwp::IsValidColorValue(m_offTrackColor) ? react::uwp::BrushFrom(m_offTrackColor) : nullptr;
-  react::uwp::UpdateToggleSwitchTrackResourceBrushes(toggleSwitch, onTrackBrush, offTrackBrush);
+  const auto onTrackBrush = IsValidColorValue(m_onTrackColor) ? BrushFrom(m_onTrackColor) : nullptr;
+  const auto offTrackBrush = IsValidColorValue(m_offTrackColor) ? BrushFrom(m_offTrackColor) : nullptr;
+  UpdateToggleSwitchTrackResourceBrushes(toggleSwitch, onTrackBrush, offTrackBrush);
 }
 
 void SwitchShadowNode::updateProperties(winrt::Microsoft::ReactNative::JSValueObject &props) {
@@ -145,7 +143,7 @@ ShadowNode *SwitchViewManager::createShadow() const {
   return new SwitchShadowNode();
 }
 
-XamlView SwitchViewManager::CreateViewCore(int64_t /*tag*/) {
+XamlView SwitchViewManager::CreateViewCore(int64_t /*tag*/, const winrt::Microsoft::ReactNative::JSValueObject &) {
   auto toggleSwitch = winrt::ToggleSwitch();
   toggleSwitch.OnContent(nullptr);
   toggleSwitch.OffContent(nullptr);

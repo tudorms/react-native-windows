@@ -4,8 +4,8 @@
  * @format
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import {Telemetry} from '@react-native-windows/telemetry';
 
 import {
@@ -151,3 +151,4 @@ assertStableInterface;
 export const commands = [autoLinkCommand, runWindowsCommand];
 export const dependencyConfig = dependencyConfigWindows;
 export const projectConfig = projectConfigWindows;
+export * from './healthChecks';

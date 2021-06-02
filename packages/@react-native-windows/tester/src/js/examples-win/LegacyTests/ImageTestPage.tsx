@@ -6,13 +6,6 @@
 import { StyleSheet, View, Image, Button } from 'react-native';
 import * as React from 'react'
 import { useState } from 'react';
-import {
-  SHOW_IMAGE_BORDER,
-  SET_RTL_MODE,
-  IMAGE_CONTAINER,
-  TREE_DUMP_RESULT,
-} from './Consts';
-import { TreeDumpControl } from './TreeDumpControl';
 
 const styles = StyleSheet.create({
   container: {
@@ -49,11 +42,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     direction: 'rtl',
   },
-  treeDumpControl: {
-    height: 150,
-    width: 500,
-    margin: 10,
-  },
 });
 
 export function ImageTestPage() {
@@ -77,23 +65,10 @@ export function ImageTestPage() {
     return styles.image;
   };
 
-  const dumpId = () => {
-    if (rltMode) {
-      return 'ImageRTL';
-    }
-    if (imageWithBorder) {
-      return 'ImageWithBorder';
-    }
-    if (clickCount === 0) {
-      return 'ImageWithoutBorder';
-    }
-    return 'ImageWithoutBorder-Subsequent';
-  };
-
   return (
     <View>
       <View
-        testID={IMAGE_CONTAINER}
+        testID="image-container"
         style={imageWithBorder ? styles.containerWithBorder : styles.container}
       >
         <Image
@@ -108,19 +83,12 @@ export function ImageTestPage() {
       <Button
         title={imageWithBorder ? 'Hide Border' : 'Show Border'}
         onPress={onPressBorder}
-        testID={SHOW_IMAGE_BORDER}
+        testID="toggle-border-button"
       />
       <Button
         title={rltMode ? 'Set image to LTR' : 'Set image to RTL'}
         onPress={() => setRtlMode(!rltMode)}
-        testID={SET_RTL_MODE}
-      />
-      <TreeDumpControl
-        style={styles.treeDumpControl}
-        dumpID={dumpId()}
-        uiaID={IMAGE_CONTAINER}
-        additionalProperties={rltMode ? ['FlowDirection'] : []}
-        testID={TREE_DUMP_RESULT}
+        testID="set-rtl-button"
       />
     </View>
   );

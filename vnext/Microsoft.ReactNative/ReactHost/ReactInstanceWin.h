@@ -52,9 +52,11 @@ class ReactInstanceWin final : public Mso::ActiveObject<IReactInstanceInternal> 
   const ReactOptions &Options() const noexcept override;
   ReactInstanceState State() const noexcept override;
   Mso::React::IReactContext &GetReactContext() const noexcept override;
-  void AttachMeasuredRootView(facebook::react::IReactRootView *rootView, folly::dynamic &&initialProps) noexcept
-      override;
-  void DetachRootView(facebook::react::IReactRootView *rootView) noexcept override;
+  void AttachMeasuredRootView(
+      facebook::react::IReactRootView *rootView,
+      folly::dynamic &&initialProps,
+      bool useFabric) noexcept override;
+  void DetachRootView(facebook::react::IReactRootView *rootView, bool useFabric) noexcept override;
 
  public: // IReactInstanceInternal
   Mso::Future<void> Destroy() noexcept override;
@@ -136,6 +138,7 @@ class ReactInstanceWin final : public Mso::ActiveObject<IReactInstanceInternal> 
   const Mso::Promise<void> m_whenCreated;
   const Mso::Promise<void> m_whenLoaded;
   const Mso::Promise<void> m_whenDestroyed;
+  Mso::Future<void> m_whenDestroyedResult; // To be returned from the Destroy() method.
 
   const Mso::VoidFunctor m_updateUI;
   const bool m_debuggerBreakOnNextLine : 1;
@@ -173,8 +176,8 @@ class ReactInstanceWin final : public Mso::ActiveObject<IReactInstanceInternal> 
 
   std::shared_ptr<IRedBoxHandler> m_redboxHandler;
 #ifndef CORE_ABI
-  std::shared_ptr<react::uwp::AppTheme> m_appTheme;
-  Mso::CntPtr<react::uwp::AppearanceChangeListener> m_appearanceListener;
+  std::shared_ptr<Microsoft::ReactNative::AppTheme> m_appTheme;
+  Mso::CntPtr<Microsoft::ReactNative::AppearanceChangeListener> m_appearanceListener;
 #endif
   Mso::DispatchQueue m_uiQueue;
   std::deque<JSCallEntry> m_jsCallQueue;

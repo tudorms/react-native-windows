@@ -8,8 +8,6 @@
  * @flow strict-local
  */
 
-'use strict';
-
 import * as React from 'react';
 import {
   Animated,
@@ -19,6 +17,7 @@ import {
   TouchableHighlight,
   Platform,
   View,
+  Switch,
 } from 'react-native';
 
 const {useEffect, useRef, useState} = React;
@@ -296,6 +295,121 @@ function PressableFocusCallbacks() {
   );
 }
 
+function PressWithOnKeyDown() {
+  const [timesPressed, setTimesPressed] = useState(0);
+  const [text, setText] = useState('defaultText');
+
+  let textLog = '';
+  if (timesPressed > 1) {
+    textLog = timesPressed + 'x onPress';
+  } else if (timesPressed > 0) {
+    textLog = 'onPress';
+  }
+
+  const [shouldPreventDefault, setShouldPreventDefault] = useState(false);
+  const toggleSwitch = () =>
+    setShouldPreventDefault(previousState => !previousState);
+
+  function myKeyDown(event) {
+    console.log('keyDown - ' + event.nativeEvent.code);
+    setText(event.nativeEvent.code);
+    if (shouldPreventDefault) {
+      event.preventDefault();
+    }
+  }
+  function myKeyUp(event) {
+    console.log('keyUp - ' + event.nativeEvent.code);
+    setText(event.nativeEvent.code);
+    if (shouldPreventDefault) {
+      event.preventDefault();
+    }
+  }
+
+  return (
+    <>
+      <View style={styles.row}>
+        <Pressable
+          onKeyDown={event => myKeyDown(event)}
+          onKeyUp={event => myKeyUp(event)}
+          onPress={() => {
+            setTimesPressed(current => current + 1);
+          }}>
+          {({pressed}) => (
+            <Text style={styles.text}>{pressed ? 'Pressed!' : 'Press Me'}</Text>
+          )}
+        </Pressable>
+        <Switch onValueChange={toggleSwitch} value={shouldPreventDefault} />
+      </View>
+      <View style={styles.logBox}>
+        <Text testID="pressable_press_console">{textLog}</Text>
+        <Text>{text}</Text>
+      </View>
+    </>
+  );
+}
+
+function PressWithKeyCapture() {
+  const [eventLog, setEventLog] = useState([]);
+  const [shouldStopPropagation, setShouldStopPropagation] = useState(false);
+  const toggleSwitch2 = () =>
+    setShouldStopPropagation(shouldStopPropagation => !shouldStopPropagation);
+
+  function appendEvent(eventName) {
+    const limit = 6;
+    setEventLog(current => {
+      return [eventName].concat(current.slice(0, limit - 1));
+    });
+  }
+
+  function myKeyDown(event) {
+    appendEvent('keyDown ' + event.nativeEvent.code);
+
+    if (shouldStopPropagation) {
+      event.stopPropagation();
+    }
+  }
+
+  function myKeyUp(event) {
+    appendEvent('keyUp ' + event.nativeEvent.code);
+
+    if (shouldStopPropagation) {
+      event.stopPropagation();
+    }
+  }
+
+  function myKeyDownCapture(event) {
+    appendEvent('keyDownCapture ' + event.nativeEvent.code);
+
+    if (shouldStopPropagation) {
+      event.stopPropagation();
+    }
+  }
+
+  return (
+    <>
+      <View testID="pressable_feedback_events">
+        <View
+          style={[styles.row, styles.centered]}
+          onKeyDownCapture={event => myKeyDownCapture(event)}>
+          <Pressable
+            style={styles.wrapper}
+            onKeyDown={event => myKeyDown(event)}
+            onKeyUp={event => myKeyUp(event)}
+            onPress={() => appendEvent('press')}>
+            <Text style={styles.button}>Press Me</Text>
+          </Pressable>
+        </View>
+        <View style={styles.eventLogBox}>
+          {eventLog.map((e, ii) => (
+            <Text key={ii}>{e}</Text>
+          ))}
+        </View>
+        <Switch onValueChange={toggleSwitch2} value={shouldStopPropagation} />
+      </View>
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
   row: {
     justifyContent: 'center',
@@ -530,6 +644,25 @@ exports.examples = [
       'They also expose onFocus and onBlur callbacks to hadle incoming native events.': string),
     render: function(): React.Node {
       return <PressableFocusCallbacks />;
+    },
+  },
+  {
+    title: 'OnKeyDown/OnKeyUp callbacks on Pressable',
+    description: ('<Pressable> components can be respond to keyDown/keyUp native events.' +
+      ' Additionally, they can be activated by pressing Space or Enter as if they were clicked with the mouse, triggering onPress' +
+      ' - this behavior can be suppressed by calling e.preventDefault() on the event (can be toggled with the switch).': string),
+    render: function(): React.Node {
+      return <PressWithOnKeyDown />;
+    },
+  },
+  {
+    title: 'OnKeyDownCapture on Pressable (View)',
+    description: ('You can intercept routed KeyDown/KeyUp events by specifying the onKeyDownCapture/onKeyUpCapture callbacks.' +
+      " In the example below, set focus to the 'Press me' element (by tabbing into it), and start pressing letters (or any other keys) on the keyboard to observe the event log below." +
+      " Additionally, it's possible to control whether the intercepted event will continue down the route to its originating element, by toggling the switch below." +
+      " This specifies that the stopPropagation() method will be called on the event. When the switch is on, you'll see the KeyDown event doesn't show up after the KeyDownCapture for a given key.": string),
+    render: function(): React.Node {
+      return <PressWithKeyCapture />;
     },
   },
 ];
