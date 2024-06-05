@@ -2682,10 +2682,10 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
-"@rnx-kit/align-deps@^2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@rnx-kit/align-deps/-/align-deps-2.3.3.tgz#f2259bb1e540a05ecdd23c0bd7f533dd5766a4d1"
-  integrity sha512-JB/EwNjputnD3C4cPBu8vLUeH5hc7GD+AabysJPTTY5lf+fl6/6YskJ2h3erMaPjvYKuyOacYx60qeYMfn1y3A==
+"@rnx-kit/align-deps@^2.4.3":
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/@rnx-kit/align-deps/-/align-deps-2.4.7.tgz#48ac4d3cc7f0be09ba65c4bf3dfa471aeca453f9"
+  integrity sha512-IpSBGEfYnbq8HjHnue/uWTS9OuO2S9aqdHFu8RUR8RysV9iLUimhBLjoNXHEL4n+wJt8+3tiB5MD2IRFfLRIWg==
 
 "@rnx-kit/chromium-edge-launcher@^1.0.0":
   version "1.0.0"
@@ -2700,24 +2700,23 @@
     rimraf "^3.0.2"
 
 "@rnx-kit/cli@^0.16.10":
-  version "0.16.22"
-  resolved "https://registry.yarnpkg.com/@rnx-kit/cli/-/cli-0.16.22.tgz#63f98affdce7c7c3ecde459c0491ed7137e720d0"
-  integrity sha512-pXsm3aqi1hOq6nTgafofuC+zMGkJA7jKTmjvp0Cb13Sr5TEQxh5zofO84AyanYBOFK0YiJZp1JJFyMhFmuaplA==
+  version "0.16.27"
+  resolved "https://registry.yarnpkg.com/@rnx-kit/cli/-/cli-0.16.27.tgz#0a9450f5331ba596fd8ba7c264a32516675361a0"
+  integrity sha512-RP0zjHQE2xu8wKqPTSuPewLFsC9fNRRD74j5coaVB5CnNNba8PRzj3OqIvWymLOIkk4pOlea1Sss5bqeeCJsqw==
   dependencies:
-    "@rnx-kit/align-deps" "^2.3.3"
+    "@rnx-kit/align-deps" "^2.4.3"
     "@rnx-kit/config" "^0.6.6"
-    "@rnx-kit/console" "^1.0.11"
+    "@rnx-kit/console" "^1.1.0"
     "@rnx-kit/metro-plugin-cyclic-dependencies-detector" "^1.1.1"
     "@rnx-kit/metro-plugin-duplicates-checker" "^2.1.1"
     "@rnx-kit/metro-plugin-typescript" "^0.4.4"
     "@rnx-kit/metro-serializer" "^1.0.14"
     "@rnx-kit/metro-serializer-esbuild" "^0.1.31"
-    "@rnx-kit/metro-service" "^3.1.5"
+    "@rnx-kit/metro-service" "^3.1.6"
     "@rnx-kit/third-party-notices" "^1.3.4"
     "@rnx-kit/tools-language" "^2.0.0"
     "@rnx-kit/tools-node" "^2.1.1"
     "@rnx-kit/tools-react-native" "^1.3.5"
-    chalk "^4.1.0"
     fs-extra "^10.0.0"
     node-fetch "^2.6.7"
     ora "^5.4.1"
@@ -2733,12 +2732,10 @@
     "@rnx-kit/tools-node" "^2.0.1"
     semver "^7.0.0"
 
-"@rnx-kit/console@^1.0.0", "@rnx-kit/console@^1.0.11", "@rnx-kit/console@^1.0.12":
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/@rnx-kit/console/-/console-1.0.12.tgz#997e370afdeee49344663c1ae017ba0b4966a5c9"
-  integrity sha512-egjvLiXFJwS5TznWnb5I6vLJ2kYW/lYZPa3E1awam+datbyf/elAH4h1ZCfOd/aiTBQur91HwX07k0WgOHJSow==
-  dependencies:
-    chalk "^4.1.0"
+"@rnx-kit/console@^1.0.0", "@rnx-kit/console@^1.0.11", "@rnx-kit/console@^1.0.12", "@rnx-kit/console@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@rnx-kit/console/-/console-1.1.0.tgz#86364f8e6c68b01e9493730276c0d8109a80cd41"
+  integrity sha512-N+zFhTSXroiK4eL26vs61Pmtl7wzTPAKLd4JKw9/fk5cNAHUscCXF/uclzuYN61Ye5AwygIvcwbm9wv4Jfa92A==
 
 "@rnx-kit/jest-preset@^0.1.0", "@rnx-kit/jest-preset@^0.1.14":
   version "0.1.16"
@@ -2751,9 +2748,9 @@
     find-up "^5.0.0"
 
 "@rnx-kit/metro-config@^1.3.5":
-  version "1.3.14"
-  resolved "https://registry.yarnpkg.com/@rnx-kit/metro-config/-/metro-config-1.3.14.tgz#b2d034e23196b6a5ca84718e08b15c0c5018708e"
-  integrity sha512-RjBM2gsDx9Ba7b39ussuRbqJsez8W37puM4oZGSLbneuhQ9kpJcC0omf2QYMKhQisTy0/4jv7L9WdpzvzXR/ow==
+  version "1.3.15"
+  resolved "https://registry.yarnpkg.com/@rnx-kit/metro-config/-/metro-config-1.3.15.tgz#357243579d7c96f9931a037864f5c58c0ce3a1cb"
+  integrity sha512-6papm4cc6uho39M7E4spxGec4jI0wLUSbvAEho0zITYgGc/U2xNnMHT37hDO4HyZoz72P8BwxsPgGfxa74+epw==
   dependencies:
     "@rnx-kit/console" "^1.0.0"
     "@rnx-kit/tools-node" "^2.0.0"
@@ -2810,15 +2807,14 @@
     "@rnx-kit/tools-react-native" "^1.3.4"
     semver "^7.0.0"
 
-"@rnx-kit/metro-service@^3.1.5":
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/@rnx-kit/metro-service/-/metro-service-3.1.5.tgz#ce3c4f833481ab1d554239a22088894f612149f0"
-  integrity sha512-PIFcJT61NEO2FnzZCLcLqsjZpy2bSIcC8P3A6A95HyTlcK/AasrSKd+KL3Bnm0wa2qtQoYS1vxcUqvourJyFgQ==
+"@rnx-kit/metro-service@^3.1.6":
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/@rnx-kit/metro-service/-/metro-service-3.1.6.tgz#33a587c031cad12c9716323a72a0abb18fb1a7e7"
+  integrity sha512-+2BPdU3i9C+oJVAPAarU0aF6Bbd70bEP0pziGrhx3ym4a+9EJd5nCXeADfvseZmXbDCzjWXNPlaUTlTQX5axrw==
   dependencies:
-    "@rnx-kit/console" "^1.0.0"
+    "@rnx-kit/console" "^1.1.0"
     "@rnx-kit/tools-node" "^2.1.0"
     "@rnx-kit/tools-react-native" "^1.3.4"
-    chalk "^4.1.0"
     node-fetch "^2.6.7"
 
 "@rnx-kit/third-party-notices@^1.3.4":
